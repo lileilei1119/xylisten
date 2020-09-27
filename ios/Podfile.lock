@@ -1,0 +1,40 @@
+PODS:
+  - Flutter (1.0.0)
+  - image_picker (0.0.1):
+    - Flutter
+  - shared_preferences (0.0.1):
+    - Flutter
+  - url_launcher (0.0.1):
+    - Flutter
+  - xy_tts (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+  - xy_tts (from `.symlinks/plugins/xy_tts/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  image_picker:
+    :path: ".symlinks/plugins/image_picker/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
+  xy_tts:
+    :path: ".symlinks/plugins/xy_tts/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
+  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
+  xy_tts: 47e6f000ec01c5bcefd644c182529939b1a2ca2a
+
+PODFILE CHECKSUM: 3aaee2e660a2a825e7c3beecb0e4a334b934f851
+
+COCOAPODS: 1.9.0
