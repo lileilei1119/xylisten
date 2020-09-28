@@ -4,4 +4,8 @@ class Constant {
 
    static bool isDarkMode = false;
 
+   /// database
+   static const String xy_db_name = "xyListenDB.db";
+   static const int xy_db_version = 1;
+
 }
