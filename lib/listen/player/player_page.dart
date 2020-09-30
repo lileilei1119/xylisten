@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xylisten/listen/home/acticle_model.dart';
+import 'package:xylisten/listen/home/article_model.dart';
 import 'package:xylisten/listen/home/article_item.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 

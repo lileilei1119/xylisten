@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:quill_delta/quill_delta.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
-import 'package:xylisten/listen/home/acticle_model.dart';
+import 'package:xylisten/listen/home/article_model.dart';
 import 'package:xylisten/platform/xy_index.dart';
 import 'package:zefyr/zefyr.dart';
 import 'images.dart';
@@ -18,9 +18,6 @@ class ArticleEditPage extends StatefulWidget {
   @override
   _ArticleEditPageState createState() => _ArticleEditPageState();
 }
-
-final doc =
-    r'[{"insert":"\n"}]';
 
 class _ArticleEditPageState extends State<ArticleEditPage> {
   ZefyrController _controller;

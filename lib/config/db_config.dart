@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:xylisten/config/xy_config.dart';
-import 'package:xylisten/listen/home/acticle_model.dart';
+import 'package:xylisten/listen/home/article_model.dart';
 
 Database db;
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xy_tts/xy_tts.dart';
-import 'package:xylisten/listen/home/acticle_model.dart';
+import 'package:xylisten/listen/home/article_model.dart';
 import 'package:xylisten/platform/res/styles.dart';
 
 class ArticlePage extends StatefulWidget {

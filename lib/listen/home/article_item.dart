@@ -3,7 +3,8 @@
  * @Email: lileilei1119@foxmail.com
  */
 import 'package:flutter/material.dart';
-import 'package:xylisten/listen/home/acticle_model.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:xylisten/listen/home/article_model.dart';
 import 'package:xylisten/listen/home/article_edit_page.dart';
 import 'package:xylisten/listen/home/article_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
@@ -20,10 +21,24 @@ class ArticleItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if(model.category==EArticleType.txt){
-          NavigatorUtil.pushPage(context, ArticleEditPage(model: model,));
-        }else{
-          NavigatorUtil.pushPage(context, ArticlePage(model: model,));
+        if (SlidableData.of(context).renderingMode ==
+            SlidableRenderingMode.slide) {
+          Slidable.of(context).close();
+          return;
+        }
+
+        if (model.category == EArticleType.txt) {
+          NavigatorUtil.pushPage(
+              context,
+              ArticleEditPage(
+                model: model,
+              ));
+        } else {
+          NavigatorUtil.pushPage(
+              context,
+              ArticlePage(
+                model: model,
+              ));
         }
       },
       child: Container(
@@ -64,10 +79,10 @@ class ArticleItem extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.play_circle_outline),
-                  color: Theme.of(context).accentColor,
+                color: Theme.of(context).accentColor,
                 tooltip: '播放',
                 onPressed: () {
-                  PlayerControlView.showPlayer(context,true);
+                  PlayerControlView.showPlayer(context, true);
                 },
               )
             ],
@@ -75,8 +90,8 @@ class ArticleItem extends StatelessWidget {
           decoration: new BoxDecoration(
               color: Theme.of(context).canvasColor,
               border: new Border(
-                  bottom:
-                      new BorderSide(width: 0.33, color: Theme.of(context).dividerColor)))),
+                  bottom: new BorderSide(
+                      width: 0.33, color: Theme.of(context).dividerColor)))),
     );
   }
 }
