@@ -4,6 +4,7 @@
  */
 import 'package:flutter/material.dart';
 import 'package:xylisten/listen/home/acticle_model.dart';
+import 'package:xylisten/listen/home/article_edit_page.dart';
 import 'package:xylisten/listen/home/article_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/res/colors.dart';
@@ -19,11 +20,11 @@ class ArticleItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        NavigatorUtil.pushPage(
-            context,
-            ArticlePage(
-              model: model,
-            ));
+        if(model.category==EArticleType.txt){
+          NavigatorUtil.pushPage(context, ArticleEditPage(model: model,));
+        }else{
+          NavigatorUtil.pushPage(context, ArticlePage(model: model,));
+        }
       },
       child: Container(
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -38,7 +39,7 @@ class ArticleItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         text: TextSpan(children: <TextSpan>[
                           TextSpan(
-                            text: "【文本】",
+                            text: "【${model.getCategoryStr()}】",
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                           TextSpan(

@@ -3,35 +3,56 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:quill_delta/quill_delta.dart';
+import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
+import 'package:xylisten/listen/home/acticle_model.dart';
+import 'package:xylisten/platform/xy_index.dart';
 import 'package:zefyr/zefyr.dart';
 import 'images.dart';
 
 class ArticleEditPage extends StatefulWidget {
+  final ArticleModel model;
+
+  ArticleEditPage({Key key, this.model}) : super(key: key);
+
   @override
   _ArticleEditPageState createState() => _ArticleEditPageState();
 }
 
-Delta getDelta() {
-  return Delta.fromJson(json.decode(doc) as List);
-}
-
 final doc =
-    r'[{"insert":"Zefyr"},{"insert":"\n\n\n"}]';
+    r'[{"insert":"\n"}]';
 
 class _ArticleEditPageState extends State<ArticleEditPage> {
-  final ZefyrController _controller =
-  ZefyrController(NotusDocument.fromDelta(getDelta()));
+  ZefyrController _controller;
   final FocusNode _focusNode = FocusNode();
   bool _editing = false;
   StreamSubscription<NotusChange> _sub;
 
+  ArticleModel _model;
+
+  DbModelProvider _dbModelProvider = DbModelProvider();
+
   @override
   void initState() {
     super.initState();
+    if(widget.model==null){
+      _model = ArticleModel(content: r'[{"insert":"\n"}]');
+      _editing = true;
+    }else{
+      _model = widget.model;
+    }
+
+    Delta delta = Delta.fromJson(json.decode(_model.content) as List);
+    _controller = ZefyrController(NotusDocument.fromDelta(delta));
+
     _sub = _controller.document.changes.listen((change) {
       print('${change.source}: ${change.change}');
+      print(_controller.document.toPlainText());
+//      if(change.change.toString().contains("\n")){
+//        _controller.document.format(0, 0, NotusAttribute.heading.level3);
+//      }
     });
+
   }
 
   @override
@@ -48,7 +69,7 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       appBar: AppBar(
-        title: Text('新建文章'),
+        title: Text(widget.model.title??'新建文章'),
         actions: [
           done,
         ],
@@ -72,9 +93,26 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
   }
 
   void _stopEditing() {
+    _model.content = json.encode(_controller.document.toDelta());
+    if(_model.tbId==null){
+      if(_model.content.isNotEmpty){
+        _model.title = "一定成功";
+        _dbModelProvider.insert(_model).then((value){
+          BotToast.showText(text: '添加成功');
+        });
+      }else{
+        BotToast.showText(text: '您未填写任何内容');
+      }
+    }else{
+      _dbModelProvider.update(_model).then((value){
+        BotToast.showText(text: '更新成功');
+      });
+    }
+
     setState(() {
       _editing = false;
     });
+
   }
 }
 
