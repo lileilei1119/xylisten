@@ -10,5 +10,14 @@
  export 'package:sqflite/sqflite.dart';
 
  import 'package:event_bus/event_bus.dart';
+import 'package:flutter/cupertino.dart';
 
  EventBus eventBus = EventBus();
+
+ class NotifyEvent{
+   String route;
+   List argList;
+
+   NotifyEvent({@required this.route, this.argList});
+
+ }

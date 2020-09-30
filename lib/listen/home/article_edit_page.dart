@@ -66,7 +66,7 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       appBar: AppBar(
-        title: Text(widget.model.title??'新建文章'),
+        title: Text(widget.model?.title??'新建文章'),
         actions: [
           done,
         ],

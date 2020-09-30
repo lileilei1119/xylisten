@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/listen/home/article_item.dart';
 import 'package:xylisten/listen/home/article_model.dart';
+import 'package:xylisten/platform/xy_index.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -22,13 +23,15 @@ class _HomePageState extends State<HomePage> {
     _dbModelProvider.delete(model.tbId).then((value){
       _articleList.remove(model);
       setState(() {
-        
+
       });
     });
   }
 
   @override
   void initState() {
+    super.initState();
+
     _dbModelProvider.openDB().then((value) {
       _dbModelProvider.getArticleList().then((value) {
         setState(() {
@@ -36,7 +39,19 @@ class _HomePageState extends State<HomePage> {
         });
       });
     });
-    super.initState();
+
+    eventBus.on<NotifyEvent>().listen((event) {
+      if (event.route == Constant.eb_add_link) {
+        ArticleModel model = ArticleModel(title: 'linklink',category: EArticleType.url,content: event.argList.first);
+        _dbModelProvider.insert(model).then((value){
+          _articleList.insert(0, model);
+          setState(() {
+
+          });
+        });
+      }
+    });
+
   }
 
   @override

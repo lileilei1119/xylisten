@@ -1,6 +1,7 @@
 class Constant {
    static const String dark_mode = "dark_mode";
    static const String eb_dark_mode = "eb_dark_mode";
+   static const String eb_add_link = "eb_add_link";
 
    static bool isDarkMode = false;
 

@@ -4,9 +4,11 @@
  */
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:xylisten/listen/home/article_model.dart';
 import 'package:xylisten/listen/home/article_edit_page.dart';
 import 'package:xylisten/listen/home/article_page.dart';
+import 'package:xylisten/listen/home/webview_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/res/colors.dart';
 import 'package:xylisten/platform/res/styles.dart';
@@ -36,9 +38,7 @@ class ArticleItem extends StatelessWidget {
         } else {
           NavigatorUtil.pushPage(
               context,
-              ArticlePage(
-                model: model,
-              ));
+              WebViewPage(model.content));
         }
       },
       child: Container(

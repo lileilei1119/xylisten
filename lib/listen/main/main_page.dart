@@ -3,12 +3,12 @@
  * @Email: lileilei1119@foxmail.com
  */
 import 'package:flutter/material.dart';
+import 'package:xylisten/listen/create/link_dialog.dart';
 import 'package:xylisten/listen/home/article_edit_page.dart';
-import 'package:xylisten/listen/home/article_page.dart';
 import 'package:xylisten/listen/home/home_page.dart';
-import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/listen/settings/settings_page.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
+import 'package:xylisten/platform/widget/xy_widget.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -16,23 +16,53 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+
+  _buildPopMenu(BuildContext context){
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.add),
+      itemBuilder: (BuildContext context) =>
+      <PopupMenuEntry<String>>[
+        XyWidget.buildSelectView(context,Icons.description, '新建笔记', 'newTxt'),
+        PopupMenuDivider(
+          height: 1,
+        ),
+        XyWidget.buildSelectView(context,Icons.delete, '新建链接', 'newLink'),
+        PopupMenuDivider(
+          height: 1,
+        ),
+      ],
+      onSelected: (String action) {
+        // 点击选项的时候
+        switch (action) {
+          case 'newTxt':
+            NavigatorUtil.pushPage(context, ArticleEditPage());
+            break;
+          case 'newLink':
+            _showLinkDialog(context);
+            break;
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('留声'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: '新建',
-            onPressed: () {
-              NavigatorUtil.pushPage(context, ArticleEditPage());
-            },
-          )
+          _buildPopMenu(context)
         ],
       ),
       body: HomePage(),
       drawer: SettingsPage(),
     );
   }
+
+  _showLinkDialog(BuildContext context) async{
+    await showDialog(context: context,barrierDismissible: true,builder: (context){
+          return LinkDialog();
+    });
+  }
+
 }
