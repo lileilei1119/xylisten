@@ -1,18 +1,144 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:xy_tts/xy_tts.dart';
+import 'package:xylisten/config/db_config.dart';
+import 'package:xylisten/listen/home/article_model.dart';
 
 class WebViewPage extends StatefulWidget {
-  final String url;
+  final ArticleModel model;
 
-  WebViewPage(this.url);
+  WebViewPage(this.model);
 
   @override
   _WebViewPageState createState() => _WebViewPageState();
 }
 
 class _WebViewPageState extends State<WebViewPage> {
+  String _content;
+  // 标记是否是加载中
+  bool loading = true;
+  // 标记当前页面是否是我们自定义的回调页面
+  bool isLoadingCallbackPage = true;
+  GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey();
+  // WebView加载状态变化监听器
+  StreamSubscription<WebViewStateChanged> onStateChanged;
+  // 插件提供的对象，该对象用于WebView的各种操作
+  FlutterWebviewPlugin flutterWebViewPlugin = new FlutterWebviewPlugin();
+
+  DbModelProvider _dbModelProvider = DbModelProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    onStateChanged = flutterWebViewPlugin.onStateChanged.listen((WebViewStateChanged state){
+      // state.type是一个枚举类型，取值有：WebViewState.shouldStart, WebViewState.startLoad, WebViewState.finishLoad
+      switch (state.type) {
+        case WebViewState.shouldStart:
+        // 准备加载
+          setState(() {
+            loading = true;
+          });
+          break;
+        case WebViewState.startLoad:
+        // 开始加载
+          break;
+        case WebViewState.finishLoad:
+        // 加载完成
+          setState(() {
+            loading = false;
+          });
+          if (isLoadingCallbackPage) {
+            // 当前是回调页面，则调用js方法获取数据
+            parseResult();
+          }
+          break;
+      }
+    });
+  }
+  // 解析WebView中的数据
+  void parseResult() {
+    flutterWebViewPlugin.evalJavascript("document.title").then((result) {
+      // result json字符串，包含token信息
+      print("=====  $result");
+      if(widget.model.title.startsWith("http") && result.isNotEmpty){
+        widget.model.title = result;
+        _dbModelProvider.update(widget.model);
+        setState(() {
+
+        });
+      }
+    });
+
+    flutterWebViewPlugin.evalJavascript("document.body.innerText").then((result) {
+      _content = result;
+      print("doc =====  $result");
+      setState(() {
+
+      });
+    });
+//    rootBundle.loadString('assets/js/fetch_data.js').then((fetchJs) {
+//      flutterWebViewPlugin.evalJavascript('HtmlDecoder()').then((result) {
+//        print("doc =====  $result");
+//      });
+//    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WebviewScaffold(appBar: AppBar(),url: widget.url,);
+    List<Widget> titleContent = [];
+    titleContent.add(Expanded(
+      child: new Text(
+        widget.model.title,
+        style: new TextStyle(color: Colors.white),
+        overflow: TextOverflow.ellipsis,
+      ),
+    ));
+    if (loading) {
+      // 如果还在加载中，就在标题栏上显示一个圆形进度条
+      titleContent.add(new CupertinoActivityIndicator());
+    }
+    titleContent.add(new Container(width: 50.0));
+    // WebviewScaffold是插件提供的组件，用于在页面上显示一个WebView并加载URL
+    return new WebviewScaffold(
+      key: scaffoldKey,
+      url:widget.model.url, // 登录的URL
+      appBar: new AppBar(
+        title: new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: titleContent,
+        ),
+//        iconTheme: new IconThemeData(color: Colors.white),
+        actions: [
+          _buildTTSBtn(),
+        ],
+      ),
+      withZoom: true,  // 允许网页缩放
+      withLocalStorage: true, // 允许LocalStorage
+      withJavascript: true, // 允许执行js代码
+    );
+  }
+
+  @override
+  void dispose() {
+    // 回收相关资源
+    // Every listener should be canceled, the same should be done with this stream.
+    onStateChanged.cancel();
+    flutterWebViewPlugin.dispose();
+    super.dispose();
+  }
+
+
+  _buildTTSBtn(){
+    if(_content!=null && _content.isNotEmpty){
+      return IconButton(
+        icon: Icon(Icons.headset),
+        onPressed: ()=>XyTts.startTTS(_content),
+      );
+    }
+    return Container();
   }
 }

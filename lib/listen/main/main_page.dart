@@ -26,7 +26,7 @@ class _MainPageState extends State<MainPage> {
         PopupMenuDivider(
           height: 1,
         ),
-        XyWidget.buildSelectView(context,Icons.delete, '新建链接', 'newLink'),
+        XyWidget.buildSelectView(context,Icons.link, '新建链接', 'newLink'),
         PopupMenuDivider(
           height: 1,
         ),

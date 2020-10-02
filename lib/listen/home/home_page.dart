@@ -42,13 +42,26 @@ class _HomePageState extends State<HomePage> {
 
     eventBus.on<NotifyEvent>().listen((event) {
       if (event.route == Constant.eb_add_link) {
-        ArticleModel model = ArticleModel(title: 'linklink',category: EArticleType.url,content: event.argList.first);
-        _dbModelProvider.insert(model).then((value){
-          _articleList.insert(0, model);
-          setState(() {
+        String url = event.argList.first;
+        if(url.isNotEmpty && url.startsWith("http")){
+          String title = RegExp(r"(http|https)://(www.)?(\w+(\.)?)+").stringMatch(url);
+          ArticleModel model = ArticleModel(title: title,category: EArticleType.url,url: url);
+          _dbModelProvider.insert(model).then((value){
+            _articleList.insert(0, model);
+            setState(() {
 
+            });
           });
-        });
+        }else{
+          Scaffold.of(context).showSnackBar(SnackBar(
+            duration: Duration(seconds: 1),
+            content: Text('请输入正确的网址（以http或https开头的字符串）'),
+            action: SnackBarAction(
+              label: '知道了',
+              onPressed: (){},
+            ),
+          ));
+        }
       }
     });
 
@@ -83,7 +96,7 @@ class _HomePageState extends State<HomePage> {
               child: ArticleItem(model));
         },
         itemExtent: 80.0,
-        itemCount: _articleList.length,
+        itemCount: _articleList?.length??0,
       ),
     );
   }

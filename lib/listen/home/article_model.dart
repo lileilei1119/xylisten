@@ -2,8 +2,6 @@
  * @Author: xikan
  * @Email: lileilei1119@foxmail.com
  */
-import 'package:xylisten/platform/xy_index.dart';
-
 final String tableArticle = 'tb_acticle';
 
 final String tbId = 'tbId';

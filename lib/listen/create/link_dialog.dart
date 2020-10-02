@@ -35,8 +35,12 @@ class LinkDialog extends Dialog {
                   TextField(controller: _linkController,),
                   FlatButton(
                     onPressed: () {
-                      eventBus.fire(NotifyEvent(route: Constant.eb_add_link, argList: [_linkController.text]));
-                      Navigator.pop(context);
+                      if(_linkController.text.isNotEmpty){
+                        eventBus.fire(NotifyEvent(route: Constant.eb_add_link, argList: [_linkController.text]));
+                        Navigator.pop(context);
+                      }else{
+                        BotToast.showText(text: '请输入url网址');
+                      }
                     },
                     child: Text('提交'),
                     textTheme: ButtonTextTheme.normal,

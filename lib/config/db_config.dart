@@ -5,6 +5,7 @@ import 'package:xylisten/listen/home/article_model.dart';
 Database db;
 
 class DbModelProvider {
+
   Future openDB() async {
     db =
         await openDatabase(Constant.xy_db_name, version: Constant.xy_db_version,
@@ -15,7 +16,7 @@ create table $tableArticle (
   $ids text,
   $title text not null,
   $url text,
-  $content text not null,
+  $content text,
   $category integer not null,
   $userId text,
   $count integer not null default 0,
@@ -44,8 +45,8 @@ create table $tableArticle (
 
   Future<List<ArticleModel>> getArticleList() async {
     List<Map<String, dynamic>> records =
-        await db.rawQuery('SELECT * FROM $tableArticle');
-    List<ArticleModel> list;
+        await db.rawQuery('SELECT * FROM $tableArticle order by $tbId desc ');
+    List<ArticleModel> list = [];
     if (records.length > 0) {
       list = records.map((value) {
         return ArticleModel.fromJson(value);

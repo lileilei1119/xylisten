@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:quill_delta/quill_delta.dart';
+import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/home/article_model.dart';
@@ -68,6 +69,7 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
       appBar: AppBar(
         title: Text(widget.model?.title??'新建文章'),
         actions: [
+          _buildTTSBtn(),
           done,
         ],
       ),
@@ -111,5 +113,17 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
     });
 
   }
+
+  _buildTTSBtn(){
+    var txt = _controller.document.toPlainText();
+    if(txt!=null && txt.isNotEmpty){
+      return IconButton(
+        icon: Icon(Icons.headset),
+        onPressed: ()=>XyTts.startTTS(txt),
+      );
+    }
+    return Container();
+  }
+
 }
 

@@ -38,7 +38,7 @@ class ArticleItem extends StatelessWidget {
         } else {
           NavigatorUtil.pushPage(
               context,
-              WebViewPage(model.content));
+              WebViewPage(model));
         }
       },
       child: Container(
