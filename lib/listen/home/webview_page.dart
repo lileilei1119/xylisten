@@ -6,6 +6,10 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/listen/home/article_model.dart';
+import 'package:xylisten/platform/utils/navigator_util.dart';
+import 'package:xylisten/platform/xy_index.dart';
+
+import 'article_edit_page.dart';
 
 class WebViewPage extends StatefulWidget {
   final ArticleModel model;
@@ -37,6 +41,7 @@ class _WebViewPageState extends State<WebViewPage> {
       // state.type是一个枚举类型，取值有：WebViewState.shouldStart, WebViewState.startLoad, WebViewState.finishLoad
       switch (state.type) {
         case WebViewState.shouldStart:
+          flutterWebViewPlugin.hide();
         // 准备加载
           setState(() {
             loading = true;
@@ -46,6 +51,7 @@ class _WebViewPageState extends State<WebViewPage> {
         // 开始加载
           break;
         case WebViewState.finishLoad:
+          flutterWebViewPlugin.show();
         // 加载完成
           setState(() {
             loading = false;
@@ -62,10 +68,11 @@ class _WebViewPageState extends State<WebViewPage> {
   void parseResult() {
     flutterWebViewPlugin.evalJavascript("document.title").then((result) {
       // result json字符串，包含token信息
-      print("=====  $result");
       if(widget.model.title.startsWith("http") && result.isNotEmpty){
         widget.model.title = result;
-        _dbModelProvider.update(widget.model);
+        _dbModelProvider.update(widget.model).then((value){
+          _refreshHomeList();
+        });
         setState(() {
 
         });
@@ -74,7 +81,6 @@ class _WebViewPageState extends State<WebViewPage> {
 
     flutterWebViewPlugin.evalJavascript("document.body.innerText").then((result) {
       _content = result;
-      print("doc =====  $result");
       setState(() {
 
       });
@@ -114,6 +120,7 @@ class _WebViewPageState extends State<WebViewPage> {
 //        iconTheme: new IconThemeData(color: Colors.white),
         actions: [
           _buildTTSBtn(),
+          _buildEditBtn(),
         ],
       ),
       withZoom: true,  // 允许网页缩放
@@ -136,9 +143,41 @@ class _WebViewPageState extends State<WebViewPage> {
     if(_content!=null && _content.isNotEmpty){
       return IconButton(
         icon: Icon(Icons.headset),
+        tooltip: '语音播报',
         onPressed: ()=>XyTts.startTTS(_content),
       );
     }
     return Container();
   }
+
+  _buildEditBtn(){
+    if(_content!=null && _content.isNotEmpty){
+      return IconButton(
+        icon: Icon(Icons.insert_drive_file),
+        tooltip: '转换成文本并编辑',
+        onPressed: (){
+          flutterWebViewPlugin.hide();
+
+          //深复制一个对象
+          ArticleModel model = ArticleModel.fromJson(widget.model.toJson());
+          model.category = EArticleType.txt;
+          model.content = _content;
+
+          NavigatorUtil.pushReplacement(
+              context,
+              ArticleEditPage(
+                model: model,
+                isPlanText: true,
+              ));
+        },
+      );
+    }
+    return Container();
+  }
+
+  _refreshHomeList(){
+    NotifyEvent event = NotifyEvent(route: Constant.eb_home_list_refresh);
+    eventBus.fire(event);
+  }
+
 }

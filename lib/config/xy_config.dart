@@ -2,7 +2,7 @@ class Constant {
    static const String dark_mode = "dark_mode";
    static const String eb_dark_mode = "eb_dark_mode";
    static const String eb_add_link = "eb_add_link";
-   static const String eb_add_link_err = "eb_add_link_err";
+   static const String eb_home_list_refresh = "eb_home_list_refresh";
 
    static bool isDarkMode = false;
 

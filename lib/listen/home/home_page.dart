@@ -28,16 +28,20 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _refreshList(){
+    _dbModelProvider.getArticleList().then((value) {
+      setState(() {
+        _articleList = value;
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
     _dbModelProvider.openDB().then((value) {
-      _dbModelProvider.getArticleList().then((value) {
-        setState(() {
-          _articleList = value;
-        });
-      });
+      _refreshList();
     });
 
     eventBus.on<NotifyEvent>().listen((event) {
@@ -62,6 +66,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ));
         }
+      }else if(event.route == Constant.eb_home_list_refresh){
+        print('====sssss====');
+        _refreshList();
       }
     });
 

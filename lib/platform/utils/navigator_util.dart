@@ -17,6 +17,21 @@ class NavigatorUtil {
         context, new CupertinoPageRoute<void>(builder: (ctx) => page));
   }
 
+  static void pushReplacement(
+      BuildContext context,
+      Widget page,
+      {
+        String pageName,
+        bool needLogin = false,
+      }) {
+    if (context == null || page == null) return;
+    // if (needLogin && !Util.isLogin()) {
+    //   pushPage(context, LoginPage());
+    //   return;
+    // }
+    Navigator.pushReplacement(context, new CupertinoPageRoute<void>(builder: (ctx) => page));
+  }
+
    static void pushWeb(BuildContext context,
        {String title, String titleId, String url, bool isHome: false}) {
      if (context == null || url.isEmpty) return;

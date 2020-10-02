@@ -13,8 +13,9 @@ import 'images.dart';
 
 class ArticleEditPage extends StatefulWidget {
   final ArticleModel model;
+  final bool isPlanText;
 
-  ArticleEditPage({Key key, this.model}) : super(key: key);
+  ArticleEditPage({Key key, this.model,this.isPlanText = false}) : super(key: key);
 
   @override
   _ArticleEditPageState createState() => _ArticleEditPageState();
@@ -24,7 +25,7 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
   ZefyrController _controller;
   final FocusNode _focusNode = FocusNode();
   bool _editing = false;
-  StreamSubscription<NotusChange> _sub;
+//  StreamSubscription<NotusChange> _sub;
 
   ArticleModel _model;
 
@@ -40,22 +41,25 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
       _model = widget.model;
     }
 
-    Delta delta = Delta.fromJson(json.decode(_model.content) as List);
+    Delta delta;
+    if(widget.isPlanText){
+      delta = Delta()..insert(_model.content+"\n");
+    }else{
+      delta = Delta.fromJson(json.decode(_model.content) as List);
+    }
+    
     _controller = ZefyrController(NotusDocument.fromDelta(delta));
 
-    _sub = _controller.document.changes.listen((change) {
-      print('${change.source}: ${change.change}');
-      print(_controller.document.toPlainText());
-//      if(change.change.toString().contains("\n")){
-//        _controller.document.format(0, 0, NotusAttribute.heading.level3);
-//      }
-    });
+//    _sub = _controller.document.changes.listen((change) {
+//      print('${change.source}: ${change.change}');
+//      print(_controller.document.toPlainText());
+//    });
 
   }
 
   @override
   void dispose() {
-    _sub.cancel();
+//    _sub.cancel();
     super.dispose();
   }
 
@@ -98,6 +102,7 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
         _model.title = "一定成功";
         _dbModelProvider.insert(_model).then((value){
           BotToast.showText(text: '添加成功');
+          _refreshHomeList();
         });
       }else{
         BotToast.showText(text: '您未填写任何内容');
@@ -105,7 +110,9 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
     }else{
       _dbModelProvider.update(_model).then((value){
         BotToast.showText(text: '更新成功');
+        _refreshHomeList();
       });
+
     }
 
     setState(() {
@@ -119,10 +126,16 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
     if(txt!=null && txt.isNotEmpty){
       return IconButton(
         icon: Icon(Icons.headset),
+        tooltip: '语音播报',
         onPressed: ()=>XyTts.startTTS(txt),
       );
     }
     return Container();
+  }
+
+  _refreshHomeList(){
+    NotifyEvent event = NotifyEvent(route: Constant.eb_home_list_refresh);
+    eventBus.fire(event);
   }
 
 }
