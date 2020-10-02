@@ -3,7 +3,9 @@
  * @Email: lileilei1119@foxmail.com
  */
 import 'package:flutter/material.dart';
+import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/xy_config.dart';
+import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/utils/common_utils.dart';
 import 'listen/main/main_page.dart';
 import 'platform/xy_index.dart';
@@ -25,11 +27,22 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    eventBus.on().listen((event) {
-      if (event == Constant.eb_dark_mode) {
+    eventBus.on<NotifyEvent>().listen((event) {
+      if (event.route == Constant.eb_dark_mode) {
         setState(() {
           _isDarkMode = Constant.isDarkMode;
         });
+      }else if(event.route == Constant.eb_play_status){
+        String status = event.argList.first;
+        if(status == Constant.play_status_playing){
+          XyTts.startTTS(PlayData.curModel.getPlanText());
+        }else if(status == Constant.play_status_pause){
+          XyTts.pauseTTS();
+        }else if(status == Constant.play_status_continue){
+          XyTts.continueTTS();
+        }else if(status == Constant.play_status_stop){
+          XyTts.stopTTS();
+        }
       }
     });
     super.initState();

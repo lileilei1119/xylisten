@@ -79,7 +79,7 @@ class ArticleItem extends StatelessWidget {
                 color: Theme.of(context).accentColor,
                 tooltip: '播放',
                 onPressed: () {
-                  PlayerControlView.showPlayer(context, true);
+                  PlayerControlView.showPlayer(context, true,model: model);
                 },
               )
             ],

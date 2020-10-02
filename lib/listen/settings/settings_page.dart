@@ -52,7 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     _isDarkMode = val;
                   });
                   Constant.isDarkMode = _isDarkMode;
-                  eventBus.fire(Constant.eb_dark_mode);
+                  eventBus.fire(NotifyEvent(route: Constant.eb_dark_mode));
                 },
               )
           ),

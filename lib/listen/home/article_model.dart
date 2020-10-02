@@ -2,6 +2,10 @@
  * @Author: xikan
  * @Email: lileilei1119@foxmail.com
  */
+import 'dart:convert';
+import 'package:quill_delta/quill_delta.dart';
+import 'package:zefyr/zefyr.dart';
+
 final String tableArticle = 'tb_acticle';
 
 final String tbId = 'tbId';
@@ -95,4 +99,29 @@ class ArticleModel {
         'createDate': createDate,
         'tagId': tagId,
       };
+
+  String getPlanText(){
+    String result;
+    switch (this.category) {
+      case EArticleType.txt:
+        {
+          Delta delta;
+          if (content==null||content.isEmpty) {
+            delta = Delta()
+              ..insert("\n");
+          } else {
+            delta = Delta.fromJson(json.decode(content) as List);
+          }
+
+          result = NotusDocument.fromDelta(delta).toPlainText();
+        }
+        break;
+      case EArticleType.url:
+        result = content;
+        break;
+
+      default:
+    }
+    return result;
+  }
 }

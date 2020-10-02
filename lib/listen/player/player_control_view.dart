@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:xylisten/config/xy_config.dart';
+import 'package:xylisten/listen/home/article_model.dart';
 import 'package:xylisten/listen/player/player_page.dart';
 import 'package:xylisten/platform/res/styles.dart';
+import 'package:xylisten/platform/xy_index.dart';
 
 class LitePlayerView extends StatefulWidget {
   @override
@@ -42,10 +45,19 @@ class _LitePlayerViewState extends State<LitePlayerView> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '287|微软如何自救',
-                                  style: Theme.of(context).textTheme.subtitle1,
-                                ),
+                                RichText(
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    text: TextSpan(children: <TextSpan>[
+                                      TextSpan(
+                                        text: "【${PlayData.curModel.getCategoryStr()}】",
+                                        style: Theme.of(context).textTheme.subtitle1,
+                                      ),
+                                      TextSpan(
+                                        text: PlayData.curModel.title ?? "",
+                                        style: Theme.of(context).textTheme.subtitle1,
+                                      ),
+                                    ])),
                                 Text(
                                   '11:58 邵恒头条',
                                   style: TextStyles.listContent,
@@ -61,7 +73,7 @@ class _LitePlayerViewState extends State<LitePlayerView> {
                             ),
                             onPressed: (){
                               setState(() {
-                                PlayerControlView.isPlaying = !PlayerControlView.isPlaying;
+                                PlayerControlView.playOrPause();
                               });
                             },
                           ),
@@ -97,16 +109,49 @@ class PlayerControlView {
 
   static bool isPlaying = false;
 
+  static void playOrPause(){
+    isPlaying = !isPlaying;
+    if(isPlaying){
+      resume();
+    }else{
+      pause();
+    }
+  }
+
+  static void play(){
+    eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_playing]));
+  }
+
+  static void pause(){
+    eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_pause]));
+  }
+
+  static void resume(){
+    eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_continue]));
+  }
+
+  static void stop(){
+    eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_stop]));
+  }
+
   static void hide() {
     if (overlayEntry != null) {
       overlayEntry.remove();
       overlayEntry = null;
     }
+    stop();
   }
 
-  static void showPlayer(BuildContext context,bool isLiteMode){
+  static void showPlayer(BuildContext context,bool isLiteMode,{ArticleModel model}){
     hide();
     if (overlayEntry == null) {
+      if(model!=null){
+        PlayData.curModel = model;
+        play();
+      }else{
+        resume();
+      }
+      isPlaying = true;
       overlayEntry = new OverlayEntry(builder: (context) {
         return isLiteMode?LitePlayerView():PlayerPage();
       });
