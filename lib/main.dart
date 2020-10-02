@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/platform/utils/common_utils.dart';
-import 'listen/home/article_edit_page.dart';
 import 'listen/main/main_page.dart';
 import 'platform/xy_index.dart';
 
@@ -48,9 +47,6 @@ class _MyAppState extends State<MyApp> {
         brightness: _isDarkMode? Brightness.dark : Brightness.light,
       ),
       home: MainPage(),
-      routes: <String,WidgetBuilder>{
-        'article':(_)=>ArticleEditPage(),
-      },
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xylisten/platform/res/index.dart';
 
 class XyWidget{
 
@@ -10,7 +11,8 @@ class XyWidget{
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             new Icon(icon, color: color??Theme.of(context).primaryColor),
-            new Text(text),
+            Gaps.hGap8,
+            Expanded(child: new Text(text)),
           ],
         ));
   }

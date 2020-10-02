@@ -67,7 +67,6 @@ class _HomePageState extends State<HomePage> {
           ));
         }
       }else if(event.route == Constant.eb_home_list_refresh){
-        print('====sssss====');
         _refreshList();
       }
     });

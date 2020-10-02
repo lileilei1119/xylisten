@@ -12,6 +12,8 @@ final String userId = 'userId';
 final String tagId = 'tagId';
 final String url = 'url';
 final String count = 'count';
+final String flag = 'flag';
+final String opt = 'opt';
 final String category = 'category';
 final String createDate = 'createDate';
 
@@ -29,6 +31,10 @@ class ArticleModel {
   String tagId;
   String url;
   int count;
+  //1:表示已经人工设置了标题
+  int flag;
+  //0:默认状态 1：回收站
+  int opt;
   EArticleType category;
   String createDate;
 
@@ -40,6 +46,8 @@ class ArticleModel {
       this.tagId,
       this.userId,
       this.count = 0,
+      this.flag = 0,
+      this.opt = 0,
       this.category = EArticleType.txt,
       this.url,
       this.createDate});
@@ -68,6 +76,8 @@ class ArticleModel {
         category = EArticleType.values[json['category']],
         userId = json['userId'],
         count = json['count'],
+        flag = json['flag'],
+        opt = json['opt'],
         createDate = json['createDate'],
         tagId = json['tagId'];
 
@@ -80,6 +90,8 @@ class ArticleModel {
         'category': category.index,
         'userId': userId,
         'count': count,
+        'flag': flag,
+        'opt': opt,
         'createDate': createDate,
         'tagId': tagId,
       };

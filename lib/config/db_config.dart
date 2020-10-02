@@ -20,6 +20,8 @@ create table $tableArticle (
   $category integer not null,
   $userId text,
   $count integer not null default 0,
+  $flag integer not null default 0,
+  $opt integer not null default 0,
   $createDate text,
   $tagId text
   )

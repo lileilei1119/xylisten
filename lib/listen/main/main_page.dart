@@ -3,8 +3,8 @@
  * @Email: lileilei1119@foxmail.com
  */
 import 'package:flutter/material.dart';
-import 'package:xylisten/listen/create/link_dialog.dart';
-import 'package:xylisten/listen/home/article_edit_page.dart';
+import 'package:xylisten/listen/dialog/link_dialog.dart';
+import 'package:xylisten/listen/home/article_page.dart';
 import 'package:xylisten/listen/home/home_page.dart';
 import 'package:xylisten/listen/settings/settings_page.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
@@ -35,7 +35,7 @@ class _MainPageState extends State<MainPage> {
         // 点击选项的时候
         switch (action) {
           case 'newTxt':
-            NavigatorUtil.pushPage(context, ArticleEditPage());
+            NavigatorUtil.pushPage(context, ArticlePage());
             break;
           case 'newLink':
             _showLinkDialog(context);

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/db_config.dart';
+import 'package:xylisten/listen/dialog/title_dialog.dart';
 import 'package:xylisten/listen/home/article_model.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
+import 'package:xylisten/platform/widget/xy_widget.dart';
 import 'package:xylisten/platform/xy_index.dart';
 
-import 'article_edit_page.dart';
+import 'article_page.dart';
 
 class WebViewPage extends StatefulWidget {
   final ArticleModel model;
@@ -121,6 +123,7 @@ class _WebViewPageState extends State<WebViewPage> {
         actions: [
           _buildTTSBtn(),
           _buildEditBtn(),
+          _buildPopMenu(context),
         ],
       ),
       withZoom: true,  // 允许网页缩放
@@ -165,7 +168,7 @@ class _WebViewPageState extends State<WebViewPage> {
 
           NavigatorUtil.pushReplacement(
               context,
-              ArticleEditPage(
+              ArticlePage(
                 model: model,
                 isPlanText: true,
               ));
@@ -173,6 +176,60 @@ class _WebViewPageState extends State<WebViewPage> {
       );
     }
     return Container();
+  }
+
+  _buildPopMenu(BuildContext context){
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.more_vert),
+      itemBuilder: (BuildContext context) =>
+      <PopupMenuEntry<String>>[
+        XyWidget.buildSelectView(context,Icons.title, '设置标题', 'setTilte'),
+        PopupMenuDivider(
+          height: 1,
+        ),
+        XyWidget.buildSelectView(context,Icons.delete, '删除', 'delete'),
+        PopupMenuDivider(
+          height: 1,
+        ),
+      ],
+      onSelected: (String action) {
+        switch (action) {
+          case 'setTilte':
+            TitleDialog.showTitleDialog(context, confirmCallBack:(title){
+              _updateTitle(title);
+            });
+            break;
+          case 'delete':
+            break;
+        }
+      },
+    );
+  }
+
+  _updateTitle(String txt){
+    widget.model.title = txt;
+    widget.model.flag = 1;
+    if(widget.model.tbId==null){
+      if(widget.model.title.isNotEmpty){
+        _dbModelProvider.insert(widget.model).then((value){
+          BotToast.showText(text: '添加成功');
+          _refreshHomeList();
+          setState(() {
+
+          });
+        });
+      }else{
+        BotToast.showText(text: '您未填写标题');
+      }
+    }else{
+      _dbModelProvider.update(widget.model).then((value){
+        BotToast.showText(text: '更新成功');
+        _refreshHomeList();
+        setState(() {
+
+        });
+      });
+    }
   }
 
   _refreshHomeList(){
