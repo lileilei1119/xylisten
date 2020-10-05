@@ -30,7 +30,8 @@ class _LitePlayerViewState extends State<LitePlayerView> {
               child: InkWell(
                 onTap: (){
                   print('object======');
-                  PlayerControlView.showPlayer(context,false);
+//                  PlayerControlView.showPlayer(context,false);
+                  _openModal4Player(context);
                 },
                 child: new Padding(
                   padding: EdgeInsets.only(left: 8,top: 8,right: 8,bottom: 0),
@@ -58,9 +59,12 @@ class _LitePlayerViewState extends State<LitePlayerView> {
                                         style: Theme.of(context).textTheme.subtitle1,
                                       ),
                                     ])),
-                                Text(
-                                  '11:58 邵恒头条',
-                                  style: TextStyles.listContent,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Text(
+                                    '时长：${PlayData.curModel.count}秒',
+                                    style: TextStyles.listContent,
+                                  ),
                                 ),
                               ],
                             ),
@@ -101,6 +105,15 @@ class _LitePlayerViewState extends State<LitePlayerView> {
           ),
         ));
   }
+
+  Future _openModal4Player(BuildContext context) async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return PlayerPage();
+        });
+  }
+
 }
 
 

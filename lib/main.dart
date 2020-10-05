@@ -2,10 +2,11 @@
  * @Author: xikan
  * @Email: lileilei1119@foxmail.com
  */
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/xy_config.dart';
-import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/utils/common_utils.dart';
 import 'listen/main/main_page.dart';
 import 'platform/xy_index.dart';
@@ -37,9 +38,17 @@ class _MyAppState extends State<MyApp> {
         if(status == Constant.play_status_playing){
           XyTts.startTTS(PlayData.curModel.getPlanText());
         }else if(status == Constant.play_status_pause){
-          XyTts.pauseTTS();
+          if(Platform.isIOS){
+            XyTts.pauseTTS();
+          }else{
+            XyTts.stopTTS();
+          }
         }else if(status == Constant.play_status_continue){
-          XyTts.continueTTS();
+          if(Platform.isIOS){
+            XyTts.continueTTS();
+          }else{
+            XyTts.startTTS(PlayData.curModel.getPlanText());
+          }
         }else if(status == Constant.play_status_stop){
           XyTts.stopTTS();
         }
