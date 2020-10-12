@@ -54,7 +54,7 @@ class _PlayerPageState extends State<PlayerPage> {
           IconButton(
             icon: Icon(Icons.close),
             onPressed: () {
-              PlayerControlView.showPlayer(context, true);
+              Navigator.of(context).pop();
             },
           )
         ],

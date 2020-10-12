@@ -10,6 +10,7 @@ import 'package:xylisten/listen/home/webview_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/res/styles.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
+import 'package:xylisten/platform/xy_index.dart';
 
 class ArticleItem extends StatelessWidget {
   final ArticleModel model;
@@ -18,6 +19,10 @@ class ArticleItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    bool isSelStatus = model.tbId == PlayData.curModel?.tbId;
+    bool isPlaying = isSelStatus && PlayerControlView.isPlaying;
+
     return InkWell(
       onTap: () {
         if (SlidableData.of(context).renderingMode ==
@@ -52,7 +57,7 @@ class ArticleItem extends StatelessWidget {
                         text: TextSpan(children: <TextSpan>[
                           TextSpan(
                             text: "【${model.getCategoryStr()}】",
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.subtitle1
                           ),
                           TextSpan(
                             text: model.title ?? "",
@@ -75,11 +80,16 @@ class ArticleItem extends StatelessWidget {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.play_circle_outline),
+                icon: isPlaying?Icon(Icons.pause_circle_outline):Icon(Icons.play_circle_outline),
                 color: Theme.of(context).accentColor,
                 tooltip: '播放',
                 onPressed: () {
-                  PlayerControlView.showPlayer(context, true,model: model);
+                  if(isPlaying){
+                    PlayerControlView.pause();
+                  }else{
+                    PlayerControlView.showPlayer(context,model: model);
+                    PlayerControlView.show();
+                  }
                 },
               )
             ],

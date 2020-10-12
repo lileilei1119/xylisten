@@ -6,21 +6,44 @@ import 'package:xylisten/platform/res/styles.dart';
 import 'package:xylisten/platform/xy_index.dart';
 
 class LitePlayerView extends StatefulWidget {
+
   @override
   _LitePlayerViewState createState() => _LitePlayerViewState();
+
 }
 
 class _LitePlayerViewState extends State<LitePlayerView> {
 
+  double _bottom = 0;
+
   @override
   void initState() {
     super.initState();
+
+    eventBus.on<NotifyEvent>().listen((event) {
+      if (event.route == Constant.eb_player_show) {
+        bool isShow = event.argList.first;
+        if(isShow){
+          setState(() {
+            _bottom = 0;
+          });
+        }else{
+          setState(() {
+            _bottom = -100;
+          });
+        }
+      }else if(event.route == Constant.eb_play_status){
+        setState(() {
+
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-        bottom: 0,
+        bottom: _bottom,
         child: new Material(
           child: new Container(
             width: MediaQuery.of(context).size.width,
@@ -85,7 +108,7 @@ class _LitePlayerViewState extends State<LitePlayerView> {
                           IconButton(
                             icon: Icon(Icons.close,color: Colors.grey),
                             onPressed: (){
-                              PlayerControlView.hide();
+                              PlayerControlView.shutdown();
                             },
                           )
                         ],
@@ -107,11 +130,16 @@ class _LitePlayerViewState extends State<LitePlayerView> {
   }
 
   Future _openModal4Player(BuildContext context) async {
+
+    PlayerControlView.hide();
+
     await showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
           return PlayerPage();
-        });
+        }).then((value){
+          PlayerControlView.show();
+    });
   }
 
 }
@@ -132,22 +160,34 @@ class PlayerControlView {
   }
 
   static void play(){
+    isPlaying = true;
     eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_playing]));
   }
 
   static void pause(){
+    isPlaying = false;
     eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_pause]));
   }
 
   static void resume(){
+    isPlaying = true;
     eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_continue]));
   }
 
   static void stop(){
+    isPlaying = false;
     eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_stop]));
   }
 
-  static void hide() {
+  static void show(){
+    eventBus.fire(NotifyEvent(route:Constant.eb_player_show,argList: [true]));
+  }
+
+  static void hide(){
+    eventBus.fire(NotifyEvent(route:Constant.eb_player_show,argList: [false]));
+  }
+
+  static void shutdown() {
     if (overlayEntry != null) {
       overlayEntry.remove();
       overlayEntry = null;
@@ -155,20 +195,19 @@ class PlayerControlView {
     stop();
   }
 
-  static void showPlayer(BuildContext context,bool isLiteMode,{ArticleModel model}){
-    hide();
+  static void showPlayer(BuildContext context,{ArticleModel model}){
     if (overlayEntry == null) {
-      if(model!=null){
-        PlayData.curModel = model;
-        play();
-      }else{
-        resume();
-      }
-      isPlaying = true;
       overlayEntry = new OverlayEntry(builder: (context) {
-        return isLiteMode?LitePlayerView():PlayerPage();
+        return LitePlayerView();
       });
       Overlay.of(context).insert(overlayEntry);
+    }
+
+    if(model!=null){
+      PlayData.curModel = model;
+      play();
+    }else{
+      resume();
     }
   }
 

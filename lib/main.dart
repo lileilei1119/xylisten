@@ -5,8 +5,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/xy_config.dart';
+import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/utils/common_utils.dart';
 import 'listen/main/main_page.dart';
 import 'platform/xy_index.dart';
@@ -26,8 +28,24 @@ class _MyAppState extends State<MyApp> {
 
   bool _isDarkMode = false;
 
+  void _onEvent(Object event) {
+    if(event is Map){
+      String route = event["route"];
+      if(route == 'onFinish'){
+        PlayerControlView.pause();
+      }
+    }
+  }
+
+  void _onError(Object error) {
+
+  }
+
   @override
   void initState() {
+
+    XyTts.eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
+
     eventBus.on<NotifyEvent>().listen((event) {
       if (event.route == Constant.eb_dark_mode) {
         setState(() {

@@ -5,6 +5,7 @@ class Constant {
    static const String eb_dark_mode = "eb_dark_mode";
    static const String eb_add_link = "eb_add_link";
    static const String eb_home_list_refresh = "eb_home_list_refresh";
+   static const String eb_player_show = "eb_player_show";
 
    static const String eb_play_status = "eb_play_status";
    static const String play_status_playing = "play_status_playing";

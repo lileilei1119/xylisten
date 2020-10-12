@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/listen/home/article_item.dart';
 import 'package:xylisten/listen/home/article_model.dart';
+import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/xy_index.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   List<ArticleModel> _articleList = [];
 
   DbModelProvider _dbModelProvider = DbModelProvider();
+  ScrollController _scrollController = ScrollController();
 
   void _delItem(ArticleModel model){
     _dbModelProvider.delete(model.tbId).then((value){
@@ -68,6 +70,10 @@ class _HomePageState extends State<HomePage> {
         }
       }else if(event.route == Constant.eb_home_list_refresh){
         _refreshList();
+      }else if(event.route == Constant.eb_play_status){
+        setState(() {
+
+        });
       }
     });
 
@@ -76,33 +82,51 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          ArticleModel model = _articleList[index];
-          return Slidable(
-              actionPane: SlidableBehindActionPane(),
-              actionExtentRatio: 0.25,
-              secondaryActions: <Widget>[
-                //右侧按钮列表
-                IconSlideAction(
-                  caption: '编辑',
-                  color: Colors.black45,
-                  icon: Icons.description,
-                  onTap: () {},
-                ),
-                IconSlideAction(
-                  caption: '删除',
-                  color: Colors.red,
-                  icon: Icons.delete,
-                  onTap: () {
-                    _delItem(model);
-                  },
-                ),
-              ],
-              child: ArticleItem(model));
+      child: NotificationListener(
+        onNotification: (ScrollNotification notification) {
+          //do something
+          if (notification is ScrollEndNotification) {
+            print('停止滚动');
+            if (_scrollController.position.extentAfter == 0) {
+              print('滚动到底部');
+              PlayerControlView.show();
+            }
+            if (_scrollController.position.extentBefore == 0) {
+              print('滚动到头部');
+              PlayerControlView.hide();
+            }
+          }
+          return true;
         },
-        itemExtent: 80.0,
-        itemCount: _articleList?.length??0,
+        child: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            ArticleModel model = _articleList[index];
+            return Slidable(
+                actionPane: SlidableBehindActionPane(),
+                actionExtentRatio: 0.25,
+                secondaryActions: <Widget>[
+                  //右侧按钮列表
+                  IconSlideAction(
+                    caption: '编辑',
+                    color: Colors.black45,
+                    icon: Icons.description,
+                    onTap: () {},
+                  ),
+                  IconSlideAction(
+                    caption: '删除',
+                    color: Colors.red,
+                    icon: Icons.delete,
+                    onTap: () {
+                      _delItem(model);
+                    },
+                  ),
+                ],
+                child: ArticleItem(model));
+          },
+          controller: _scrollController,
+          itemExtent: 80.0,
+          itemCount: _articleList?.length??0,
+        ),
       ),
     );
   }
