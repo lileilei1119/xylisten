@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/model/article_model.dart';
-import 'package:xylisten/listen/home/article_item.dart';
+import 'package:xylisten/listen/page/cell/article_item.dart';
+import 'package:xylisten/listen/page/cell/player_item.dart';
+import 'package:xylisten/listen/page/webview_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/res/index.dart';
+import 'package:xylisten/platform/utils/navigator_util.dart';
 import 'package:xylisten/platform/xy_index.dart';
+
+import 'article_page.dart';
 
 class PlayerPage extends StatefulWidget {
   @override
@@ -100,8 +105,55 @@ class _PlayerPageState extends State<PlayerPage> {
           ),
           IconButton(
             icon: Icon(Icons.description, size: 30),
+            onPressed: (){
+              if(PlayData.curModel!=null){
+                if (PlayData.curModel.category == EArticleType.txt) {
+                  NavigatorUtil.pushPage(
+                      context,
+                      ArticlePage(
+                        model: PlayData.curModel,
+                      ));
+                } else {
+                  NavigatorUtil.pushPage(
+                      context,
+                      WebViewPage(PlayData.curModel));
+                }
+              }else{
+                BotToast.showText(text: '当前播放内容为空');
+              }
+            },
           ),
         ],
+      ),
+    );
+  }
+
+  _buildListHeader(){
+    return Container(
+      height: 40,
+      color: Colors.grey,
+      child: Padding(
+        padding: EdgeInsets.only(left: 8,right: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(child: Text('播放列表',style: Theme.of(context).textTheme.button,)),
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.delete, size: 24),
+                  tooltip: '清空播放列表',
+                ),
+                IconButton(
+                  icon: Icon(Icons.add_box, size: 24),
+                  tooltip: '添加内容至播放列表',
+                ),
+              ],
+            )
+
+          ],
+        ),
       ),
     );
   }
@@ -115,6 +167,8 @@ class _PlayerPageState extends State<PlayerPage> {
           setState(() {
 
           });
+        }else if(event.route == Constant.eb_refresh_player_list){
+          _refreshList();
         }
       }
     });
@@ -131,13 +185,13 @@ class _PlayerPageState extends State<PlayerPage> {
           children: [
             _buildHeader(),
             _buildPlayView(),
-            Divider(),
+            _buildListHeader(),
             Expanded(
                 child: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return ArticleItem(_articleList[index]);
+                return PlayerItem(_articleList[index]);
               },
-              itemExtent: 80.0,
+              itemExtent: 44.0,
               itemCount: _articleList.length,
             )),
           ]),

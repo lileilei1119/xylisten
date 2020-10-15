@@ -113,13 +113,13 @@ class _LitePlayerViewState extends State<LitePlayerView> {
                           )
                         ],
                       ),
-                      LinearProgressIndicator(
-                        backgroundColor: Theme.of(context).canvasColor,
-                        minHeight: 1,
-                        valueColor: new AlwaysStoppedAnimation<Color>(
-                            Theme.of(context).primaryColor),
-                        value: 0.2,
-                      )
+//                      LinearProgressIndicator(
+//                        backgroundColor: Theme.of(context).canvasColor,
+//                        minHeight: 1,
+//                        valueColor: new AlwaysStoppedAnimation<Color>(
+//                            Theme.of(context).primaryColor),
+//                        value: 0.2,
+//                      )
                     ]),
                   ),
                 ),

@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:xylisten/config/db_config.dart';
-import 'package:xylisten/listen/home/article_item.dart';
+import 'package:xylisten/listen/page/cell/article_item.dart';
 import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/xy_index.dart';

@@ -85,6 +85,10 @@ create table $tableArticle (
     return playData;
   }
 
+  Future<int> deletePlayDataByArticleId(int id) async {
+    return await db.delete(tablePlayData, where: '$pd_articleId = ?', whereArgs: [id]);
+  }
+
   Future<List<ArticleModel>> getPlayDataList({int flag = 0}) async {
     List<Map<String, dynamic>> records = await db.rawQuery(
         'SELECT * FROM $tableArticle where $tbId in (SELECT $pd_articleId FROM $tablePlayData where $pd_flag=? order by $pd_seat desc)',

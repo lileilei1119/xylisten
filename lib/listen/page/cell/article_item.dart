@@ -51,19 +51,12 @@ class ArticleItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    RichText(
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        text: TextSpan(children: <TextSpan>[
-                          TextSpan(
-                            text: "【${model.getCategoryStr()}】",
-                            style: Theme.of(context).textTheme.subtitle1
-                          ),
-                          TextSpan(
-                            text: model.title ?? "",
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                        ])),
+                    Text(
+                      "【${model.getCategoryStr()}】" + model.title ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: isSelStatus?Theme.of(context).textTheme.bodyText1:Theme.of(context).textTheme.bodyText2,
+                    ),
                     Gaps.vGap8,
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
