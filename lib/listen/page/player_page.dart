@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
-import 'package:xylisten/listen/home/article_model.dart';
+import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/listen/home/article_item.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/res/index.dart';
+import 'package:xylisten/platform/xy_index.dart';
 
 class PlayerPage extends StatefulWidget {
   @override
@@ -11,10 +13,15 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  List<ArticleModel> _acticleList = [
-    ArticleModel(title: '好好学习', content: '天天向上'),
-    ArticleModel(title: '好好学习', content: 'c2'),
-  ];
+  List<ArticleModel> _articleList = [];
+
+  void _refreshList(){
+    dbModelProvider.getPlayDataList().then((value) {
+      setState(() {
+        _articleList = value;
+      });
+    });
+  }
 
   _buildHeader() {
     return Container(
@@ -83,8 +90,8 @@ class _PlayerPageState extends State<PlayerPage> {
               size: 48,
             ),
             onPressed: () {
+              PlayerControlView.playOrPause();
               setState(() {
-                PlayerControlView.isPlaying = !PlayerControlView.isPlaying;
               });
             },
           ),
@@ -100,6 +107,22 @@ class _PlayerPageState extends State<PlayerPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    eventBus.on<NotifyEvent>().listen((event) {
+      if(mounted){
+        if(event.route == Constant.eb_play_status){
+          setState(() {
+
+          });
+        }
+      }
+    });
+
+    _refreshList();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
@@ -112,10 +135,10 @@ class _PlayerPageState extends State<PlayerPage> {
             Expanded(
                 child: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return ArticleItem(_acticleList[index]);
+                return ArticleItem(_articleList[index]);
               },
               itemExtent: 80.0,
-              itemCount: _acticleList.length,
+              itemCount: _articleList.length,
             )),
           ]),
     );

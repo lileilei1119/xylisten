@@ -1,4 +1,5 @@
-import 'package:xylisten/listen/home/article_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xylisten/listen/model/article_model.dart';
 
 class Constant {
    static const String dark_mode = "dark_mode";
@@ -13,6 +14,8 @@ class Constant {
    static const String play_status_continue = "play_status_continue";
    static const String play_status_stop = "play_status_stop";
 
+   static const String sp_play_list = "sp_play_list";
+
    static bool isDarkMode = false;
 
    /// database
@@ -23,6 +26,6 @@ class Constant {
 
 class PlayData{
    static List<ArticleModel> playList = [];
-   static int playIdx;
+   static int playIdx = 0;
    static ArticleModel curModel;
 }

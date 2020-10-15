@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/listen/home/article_item.dart';
-import 'package:xylisten/listen/home/article_model.dart';
+import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/xy_index.dart';
 
@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   ScrollController _scrollController = ScrollController();
 
   void _delItem(ArticleModel model){
-    _dbModelProvider.delete(model.tbId).then((value){
+    _dbModelProvider.deleteArticle(model.tbId).then((value){
       _articleList.remove(model);
       setState(() {
 
@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
         if(url.isNotEmpty && url.startsWith("http")){
           String title = RegExp(r"(http|https)://(www.)?(\w+(\.)?)+").stringMatch(url);
           ArticleModel model = ArticleModel(title: title,category: EArticleType.url,url: url);
-          _dbModelProvider.insert(model).then((value){
+          _dbModelProvider.insertArticle(model).then((value){
             _articleList.insert(0, model);
             setState(() {
 

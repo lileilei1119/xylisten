@@ -6,12 +6,12 @@ import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/dialog/title_dialog.dart';
-import 'package:xylisten/listen/home/article_model.dart';
+import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/platform/widget/xy_widget.dart';
 import 'package:xylisten/platform/xy_index.dart';
 import 'package:zefyr/zefyr.dart';
 
-import 'images.dart';
+import '../home/images.dart';
 
 class ArticlePage extends StatefulWidget {
   final ArticleModel model;
@@ -111,7 +111,7 @@ class _ArticlePageState extends State<ArticlePage> {
     print('count==${_model.count}');
     if(_model.tbId==null){
       if(_model.content.isNotEmpty){
-        _dbModelProvider.insert(_model).then((value){
+        _dbModelProvider.insertArticle(_model).then((value){
           BotToast.showText(text: '添加成功');
           _refreshHomeList();
         });
@@ -119,7 +119,7 @@ class _ArticlePageState extends State<ArticlePage> {
         BotToast.showText(text: '您未填写任何内容');
       }
     }else{
-      _dbModelProvider.update(_model).then((value){
+      _dbModelProvider.updateArticle(_model).then((value){
         BotToast.showText(text: '更新成功');
         _refreshHomeList();
       });
@@ -182,7 +182,7 @@ class _ArticlePageState extends State<ArticlePage> {
     _model.flag = 1;
     if(_model.tbId==null){
       if(_model.title.isNotEmpty){
-        _dbModelProvider.insert(_model).then((value){
+        _dbModelProvider.insertArticle(_model).then((value){
           BotToast.showText(text: '添加成功');
           _refreshHomeList();
           setState(() {
@@ -193,7 +193,7 @@ class _ArticlePageState extends State<ArticlePage> {
         BotToast.showText(text: '您未填写标题');
       }
     }else{
-      _dbModelProvider.update(_model).then((value){
+      _dbModelProvider.updateArticle(_model).then((value){
         BotToast.showText(text: '更新成功');
         _refreshHomeList();
         setState(() {

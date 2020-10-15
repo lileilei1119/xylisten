@@ -10,7 +10,7 @@ import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/utils/common_utils.dart';
-import 'listen/main/main_page.dart';
+import 'listen/page/main_page.dart';
 import 'platform/xy_index.dart';
 
 

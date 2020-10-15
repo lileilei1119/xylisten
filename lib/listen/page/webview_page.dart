@@ -6,7 +6,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/listen/dialog/title_dialog.dart';
-import 'package:xylisten/listen/home/article_model.dart';
+import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
 import 'package:xylisten/platform/widget/xy_widget.dart';
 import 'package:xylisten/platform/xy_index.dart';
@@ -72,7 +72,7 @@ class _WebViewPageState extends State<WebViewPage> {
       // result json字符串，包含token信息
       if(widget.model.title.startsWith("http") && result.isNotEmpty){
         widget.model.title = result;
-        _dbModelProvider.update(widget.model).then((value){
+        _dbModelProvider.updateArticle(widget.model).then((value){
           _refreshHomeList();
         });
         setState(() {
@@ -211,7 +211,7 @@ class _WebViewPageState extends State<WebViewPage> {
     widget.model.flag = 1;
     if(widget.model.tbId==null){
       if(widget.model.title.isNotEmpty){
-        _dbModelProvider.insert(widget.model).then((value){
+        _dbModelProvider.insertArticle(widget.model).then((value){
           BotToast.showText(text: '添加成功');
           _refreshHomeList();
           setState(() {
@@ -222,7 +222,7 @@ class _WebViewPageState extends State<WebViewPage> {
         BotToast.showText(text: '您未填写标题');
       }
     }else{
-      _dbModelProvider.update(widget.model).then((value){
+      _dbModelProvider.updateArticle(widget.model).then((value){
         BotToast.showText(text: '更新成功');
         _refreshHomeList();
         setState(() {

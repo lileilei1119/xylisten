@@ -4,9 +4,9 @@
  */
 import 'package:flutter/material.dart';
 import 'package:xylisten/listen/dialog/link_dialog.dart';
-import 'package:xylisten/listen/home/article_page.dart';
-import 'package:xylisten/listen/home/home_page.dart';
-import 'package:xylisten/listen/settings/settings_page.dart';
+import 'package:xylisten/listen/page/article_page.dart';
+import 'package:xylisten/listen/page/home_page.dart';
+import 'package:xylisten/listen/page/settings_page.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
 import 'package:xylisten/platform/widget/xy_widget.dart';
 

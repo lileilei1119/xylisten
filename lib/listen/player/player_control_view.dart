@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
-import 'package:xylisten/listen/home/article_model.dart';
-import 'package:xylisten/listen/player/player_page.dart';
+import 'package:xylisten/listen/model/article_model.dart';
+import 'package:xylisten/listen/model/playdata_model.dart';
+import 'package:xylisten/listen/page/player_page.dart';
 import 'package:xylisten/platform/res/styles.dart';
 import 'package:xylisten/platform/xy_index.dart';
 
@@ -52,8 +54,6 @@ class _LitePlayerViewState extends State<LitePlayerView> {
               elevation: 10,
               child: InkWell(
                 onTap: (){
-                  print('object======');
-//                  PlayerControlView.showPlayer(context,false);
                   _openModal4Player(context);
                 },
                 child: new Padding(
@@ -151,8 +151,7 @@ class PlayerControlView {
   static bool isPlaying = false;
 
   static void playOrPause(){
-    isPlaying = !isPlaying;
-    if(isPlaying){
+    if(!isPlaying){
       resume();
     }else{
       pause();
@@ -204,8 +203,11 @@ class PlayerControlView {
     }
 
     if(model!=null){
+      //添加到播放列表
       PlayData.curModel = model;
-      play();
+      dbModelProvider.insertPlayData(PlayDataModel()..articleId=model.tbId).then((value){
+        play();
+      });
     }else{
       resume();
     }

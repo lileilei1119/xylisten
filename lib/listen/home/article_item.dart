@@ -4,9 +4,9 @@
  */
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:xylisten/listen/home/article_page.dart';
-import 'package:xylisten/listen/home/article_model.dart';
-import 'package:xylisten/listen/home/webview_page.dart';
+import 'package:xylisten/listen/page/article_page.dart';
+import 'package:xylisten/listen/model/article_model.dart';
+import 'package:xylisten/listen/page/webview_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/res/styles.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
