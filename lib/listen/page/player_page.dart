@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/model/article_model.dart';
-import 'package:xylisten/listen/page/cell/article_item.dart';
 import 'package:xylisten/listen/page/cell/player_item.dart';
 import 'package:xylisten/listen/page/webview_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/res/index.dart';
+import 'package:xylisten/platform/utils/common_utils.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
 import 'package:xylisten/platform/xy_index.dart';
 
@@ -79,10 +79,16 @@ class _PlayerPageState extends State<PlayerPage> {
       height: 100,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconButton(
-            icon: Icon(Icons.timer, size: 30),
+          Column(
+            children: [
+              IconButton(
+                icon: Icon(Icons.timer, size: 30),
+                onPressed: ()=>_openModal4Timer(context),
+              ),
+              Text('${CommonUtils.sec2Str(PlayerControlView.leftSec)}',style: Theme.of(context).textTheme.caption,),
+            ]
           ),
           IconButton(icon: Icon(Icons.skip_previous, size: 30)),
           IconButton(
@@ -164,11 +170,11 @@ class _PlayerPageState extends State<PlayerPage> {
     eventBus.on<NotifyEvent>().listen((event) {
       if(mounted){
         if(event.route == Constant.eb_play_status){
-          setState(() {
-
-          });
+          setState(() {});
         }else if(event.route == Constant.eb_refresh_player_list){
           _refreshList();
+        }else if(event.route == Constant.eb_timer_countdown){
+          setState(() {});
         }
       }
     });
@@ -197,4 +203,73 @@ class _PlayerPageState extends State<PlayerPage> {
           ]),
     );
   }
+
+  Future _openModal4Timer(BuildContext context) async {
+
+    _buildItem(int value){
+
+      String title = '';
+      switch(value){
+        case 15:
+          title = '15分钟后关闭';
+          break;
+        case 30:
+          title = '半小时后关闭';
+          break;
+        case 60:
+          title = '1小时后关闭';
+          break;
+        case 120:
+          title = '2小时后关闭';
+          break;
+        case 0:
+          title = '关闭';
+          break;
+
+      }
+
+      return ListTile(
+        title: Text('$title', textAlign: TextAlign.center),
+        onTap: (){
+          if(value<=0){
+            PlayerControlView.stopTimer();
+          }else{
+            PlayerControlView.startTimer(value*60);
+          }
+          Navigator.pop(context);
+          setState(() {});
+        },
+      );
+    }
+
+    await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 300.0,
+            child: Column(
+              children: <Widget>[
+                _buildItem(15),
+                Divider(
+                  height: 1,
+                ),
+                _buildItem(30),
+                Divider(
+                  height: 1,
+                ),
+                _buildItem(60),
+                Divider(
+                  height: 1,
+                ),
+                _buildItem(120),
+                Divider(
+                  height: 1,
+                ),
+                _buildItem(0),
+              ],
+            ),
+          );
+        });
+  }
+
 }

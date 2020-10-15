@@ -11,4 +11,14 @@ import 'package:xylisten/config/xy_config.dart';
      SharedPreferences prefs = await SharedPreferences.getInstance();
      prefs.setBool(Constant.dark_mode, !prefs.getBool(Constant.dark_mode));
    }
+
+   static sec2Str(int sec){
+     if(sec<=0){
+       return "";
+     }
+     int hour = sec~/3600;
+     int min = (sec~/60)%60;
+     int ss = sec%60;
+     return "$hour:$min:$ss";
+   }
  }

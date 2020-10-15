@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
@@ -149,6 +151,31 @@ class PlayerControlView {
   static OverlayEntry overlayEntry;
 
   static bool isPlaying = false;
+
+  static Timer _countdownTimer;
+  static int leftSec = 0;
+
+  static void startTimer(int sec){
+    leftSec = sec;
+    stopTimer();
+    const timeout = const Duration(seconds: 1);
+    _countdownTimer = Timer.periodic(timeout, (timer) {
+      leftSec --;
+      eventBus.fire(NotifyEvent(route: Constant.eb_timer_countdown));
+      if(leftSec > 0 ){
+
+      }else{
+        timer.cancel();  // 取消定时器
+        PlayerControlView.stop();
+      }
+    });
+
+  }
+
+  static void stopTimer(){
+    _countdownTimer?.cancel();
+    _countdownTimer = null;
+  }
 
   static void playOrPause(){
     if(!isPlaying){
