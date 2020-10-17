@@ -28,7 +28,7 @@ class PlayerItem extends StatelessWidget {
         if (isPlaying) {
           PlayerControlView.pause();
         } else {
-          PlayerControlView.showPlayer(context, model: model);
+          PlayerControlView.skip(model);
         }
       },
       child: Container(
@@ -75,7 +75,7 @@ class PlayerItem extends StatelessWidget {
 
   _delItem() {
     dbModelProvider.deletePlayDataByArticleId(model.tbId).then((value) {
-      eventBus.fire(NotifyEvent(route: Constant.eb_refresh_player_list));
+      PlayerControlView.deleteById(model.tbId);
     });
   }
 

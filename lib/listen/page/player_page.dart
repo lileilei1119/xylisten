@@ -18,15 +18,15 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  List<ArticleModel> _articleList = [];
-
-  void _refreshList(){
-    dbModelProvider.getPlayDataList().then((value) {
-      setState(() {
-        _articleList = value;
-      });
-    });
-  }
+//  List<ArticleModel> _articleList = [];
+//
+//  void _refreshList(){
+//    dbModelProvider.getPlayDataList().then((value) {
+//      setState(() {
+//        _articleList = value;
+//      });
+//    });
+//  }
 
   _buildHeader() {
     return Container(
@@ -90,7 +90,10 @@ class _PlayerPageState extends State<PlayerPage> {
               Text('${CommonUtils.sec2Str(PlayerControlView.leftSec)}',style: Theme.of(context).textTheme.caption,),
             ]
           ),
-          IconButton(icon: Icon(Icons.skip_previous, size: 30)),
+          IconButton(
+              icon: Icon(Icons.skip_previous, size: 30),
+              onPressed: PlayerControlView.hasPre()?()=>PlayerControlView.pre():null,
+          ),
           IconButton(
             padding: EdgeInsets.zero,
             icon: Icon(
@@ -108,6 +111,7 @@ class _PlayerPageState extends State<PlayerPage> {
           ),
           IconButton(
             icon: Icon(Icons.skip_next, size: 30),
+            onPressed: PlayerControlView.hasNext()?()=>PlayerControlView.next():null,
           ),
           IconButton(
             icon: Icon(Icons.description, size: 30),
@@ -171,15 +175,12 @@ class _PlayerPageState extends State<PlayerPage> {
       if(mounted){
         if(event.route == Constant.eb_play_status){
           setState(() {});
-        }else if(event.route == Constant.eb_refresh_player_list){
-          _refreshList();
         }else if(event.route == Constant.eb_timer_countdown){
           setState(() {});
         }
       }
     });
 
-    _refreshList();
   }
 
   @override
@@ -195,10 +196,10 @@ class _PlayerPageState extends State<PlayerPage> {
             Expanded(
                 child: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return PlayerItem(_articleList[index]);
+                return PlayerItem(PlayData.playList[index]);
               },
               itemExtent: 44.0,
-              itemCount: _articleList.length,
+              itemCount: PlayData.playList.length,
             )),
           ]),
     );

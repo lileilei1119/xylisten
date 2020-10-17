@@ -18,7 +18,10 @@ import 'package:xylisten/config/xy_config.dart';
      }
      int hour = sec~/3600;
      int min = (sec~/60)%60;
+     if(hour>0){
+       return "$hour".padLeft(2, '0')+":"+"$min".padLeft(2, '0');
+     }
      int ss = sec%60;
-     return "$hour:$min:$ss";
+      return "$min".padLeft(2, '0')+":"+"$ss".padLeft(2, '0');
    }
  }

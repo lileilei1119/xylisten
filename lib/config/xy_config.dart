@@ -7,7 +7,7 @@ class Constant {
    static const String eb_add_link = "eb_add_link";
    static const String eb_home_list_refresh = "eb_home_list_refresh";
    static const String eb_player_show = "eb_player_show";
-   static const String eb_refresh_player_list = "eb_refresh_player_list";
+//   static const String eb_refresh_player_list = "eb_refresh_player_list";
    static const String eb_timer_countdown = "eb_timer_countdown";
 
    static const String eb_play_status = "eb_play_status";

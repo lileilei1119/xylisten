@@ -156,8 +156,8 @@ class PlayerControlView {
   static int leftSec = 0;
 
   static void startTimer(int sec){
-    leftSec = sec;
     stopTimer();
+    leftSec = sec;
     const timeout = const Duration(seconds: 1);
     _countdownTimer = Timer.periodic(timeout, (timer) {
       leftSec --;
@@ -173,6 +173,8 @@ class PlayerControlView {
   }
 
   static void stopTimer(){
+    //小于0时刷新界面
+    leftSec = 0;
     _countdownTimer?.cancel();
     _countdownTimer = null;
   }
@@ -234,10 +236,79 @@ class PlayerControlView {
       PlayData.curModel = model;
       dbModelProvider.insertPlayData(PlayDataModel()..articleId=model.tbId).then((value){
         play();
+        PlayData.playIdx = 0;
+        refreshLayerList();
       });
     }else{
       resume();
     }
+  }
+
+  static void refreshLayerList(){
+    dbModelProvider.getPlayDataList().then((value) {
+      PlayData.playList = value;
+    });
+  }
+
+  static void next(){
+    if(hasNext()){
+      PlayData.playIdx++;
+      PlayData.curModel = PlayData.playList[PlayData.playIdx];
+      play();
+    }
+  }
+
+  static void pre(){
+    if(hasPre()){
+      PlayData.playIdx--;
+      PlayData.curModel = PlayData.playList[PlayData.playIdx];
+      play();
+    }
+  }
+
+  static void skip(ArticleModel model){
+    int idx = 0;
+    PlayData.playList.forEach((element) {
+      if(model.tbId==element.tbId){
+        PlayData.curModel = model;
+        PlayData.playIdx = idx;
+        play();
+        return;
+      }
+      idx ++;
+    });
+  }
+
+  static void deleteById(int tbId){
+    int idx = 0;
+    PlayData.playList.forEach((element) {
+      idx ++;
+      if(tbId==element.tbId){
+        PlayData.playList.remove(element);
+        if(idx<PlayData.playIdx){
+          PlayData.playIdx--;
+        }else if(idx == PlayData.playIdx){
+          play();
+        }else{
+          //不需要处理
+        }
+        return;
+      }
+    });
+  }
+
+  static bool hasNext(){
+    if(PlayData.playIdx<PlayData.playList.length-1){
+      return true;
+    }
+    return false;
+  }
+
+  static bool hasPre(){
+    if(PlayData.playIdx==0){
+      return false;
+    }
+    return true;
   }
 
 }

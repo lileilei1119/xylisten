@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
     if(event is Map){
       String route = event["route"];
       if(route == 'onFinish'){
-        PlayerControlView.pause();
+        PlayerControlView.next();
       }
     }
   }
