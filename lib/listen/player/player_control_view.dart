@@ -220,6 +220,8 @@ class PlayerControlView {
       overlayEntry.remove();
       overlayEntry = null;
     }
+    PlayData.playIdx = 0;
+    PlayData.curModel = null;
     stop();
   }
 
