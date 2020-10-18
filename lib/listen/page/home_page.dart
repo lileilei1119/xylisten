@@ -105,13 +105,6 @@ class _HomePageState extends State<HomePage> {
                 actionPane: SlidableBehindActionPane(),
                 actionExtentRatio: 0.25,
                 secondaryActions: <Widget>[
-                  //右侧按钮列表
-                  IconSlideAction(
-                    caption: '编辑',
-                    color: Colors.black45,
-                    icon: Icons.description,
-                    onTap: () {},
-                  ),
                   IconSlideAction(
                     caption: '删除',
                     color: Colors.red,

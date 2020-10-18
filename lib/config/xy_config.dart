@@ -9,6 +9,7 @@ class Constant {
    static const String eb_player_show = "eb_player_show";
 //   static const String eb_refresh_player_list = "eb_refresh_player_list";
    static const String eb_timer_countdown = "eb_timer_countdown";
+   static const String eb_play_split_audio = "eb_play_split_audio";
 
    static const String eb_play_status = "eb_play_status";
    static const String play_status_playing = "play_status_playing";

@@ -215,6 +215,10 @@ class PlayerControlView {
     eventBus.fire(NotifyEvent(route:Constant.eb_player_show,argList: [false]));
   }
 
+  static void playSplitAudio(){
+    eventBus.fire(NotifyEvent(route:Constant.eb_play_split_audio));
+  }
+
   static void shutdown() {
     if (overlayEntry != null) {
       overlayEntry.remove();
@@ -256,7 +260,8 @@ class PlayerControlView {
     if(hasNext()){
       PlayData.playIdx++;
       PlayData.curModel = PlayData.playList[PlayData.playIdx];
-      play();
+      playSplitAudio();
+      Future.delayed(Duration(seconds: 1)).then((value) => play());
     }
   }
 

@@ -4,6 +4,7 @@
  */
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xy_tts/xy_tts.dart';
@@ -12,6 +13,7 @@ import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/utils/common_utils.dart';
 import 'listen/page/main_page.dart';
 import 'platform/xy_index.dart';
+import 'package:path_provider/path_provider.dart';
 
 
 void main() {
@@ -27,6 +29,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
   bool _isDarkMode = false;
+  String audioPath;
+  AudioPlayer audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
 
   void _onEvent(Object event) {
     if(event is Map){
@@ -49,9 +53,17 @@ class _MyAppState extends State<MyApp> {
 
   }
 
+  Future _loadAudioFile() async {
+    final file = new File('${(await getTemporaryDirectory()).path}/split.mp3');
+    await file.writeAsBytes((await rootBundle.load('assets/audio/split.mp3')).buffer.asUint8List());
+    audioPath = file.path;
+  }
+
   @override
   void initState() {
 
+    _loadAudioFile();
+    
     XyTts.eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
 
     eventBus.on<NotifyEvent>().listen((event) {
@@ -78,6 +90,8 @@ class _MyAppState extends State<MyApp> {
         }else if(status == Constant.play_status_stop){
           XyTts.stopTTS();
         }
+      }else if(event.route == Constant.eb_play_split_audio){
+        audioPlayer.play(audioPath, isLocal: true);
       }
     });
     super.initState();
