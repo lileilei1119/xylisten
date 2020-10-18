@@ -16,10 +16,4 @@
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-#pragma mark - 后台播放
-
-- (BOOL)canBecomeFirstResponder {
-    return YES;
-}
-
 @end

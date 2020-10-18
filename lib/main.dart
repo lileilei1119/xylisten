@@ -33,6 +33,14 @@ class _MyAppState extends State<MyApp> {
       String route = event["route"];
       if(route == 'onFinish'){
         PlayerControlView.next();
+      }else if(route == 'onRemotePre'){
+        PlayerControlView.pre();
+      }else if(route == 'onRemoteNext'){
+        PlayerControlView.next();
+      }else if(route =='onRemotePause'){
+        PlayerControlView.pause();
+      }else if(route == 'onRemotePlay'){
+        PlayerControlView.resume();
       }
     }
   }
@@ -54,7 +62,7 @@ class _MyAppState extends State<MyApp> {
       }else if(event.route == Constant.eb_play_status){
         String status = event.argList.first;
         if(status == Constant.play_status_playing){
-          XyTts.startTTS(PlayData.curModel.getPlanText());
+          XyTts.startTTS(PlayData.curModel.title,PlayData.curModel.getPlanText());
         }else if(status == Constant.play_status_pause){
           if(Platform.isIOS){
             XyTts.pauseTTS();
@@ -65,7 +73,7 @@ class _MyAppState extends State<MyApp> {
           if(Platform.isIOS){
             XyTts.continueTTS();
           }else{
-            XyTts.startTTS(PlayData.curModel.getPlanText());
+            XyTts.startTTS(PlayData.curModel.title,PlayData.curModel.getPlanText());
           }
         }else if(status == Constant.play_status_stop){
           XyTts.stopTTS();

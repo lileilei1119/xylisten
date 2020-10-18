@@ -7,6 +7,7 @@ import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/dialog/title_dialog.dart';
 import 'package:xylisten/listen/model/article_model.dart';
+import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/widget/xy_widget.dart';
 import 'package:xylisten/platform/xy_index.dart';
 import 'package:zefyr/zefyr.dart';
@@ -138,7 +139,10 @@ class _ArticlePageState extends State<ArticlePage> {
       return IconButton(
         icon: Icon(Icons.headset),
         tooltip: '语音播报',
-        onPressed: ()=>XyTts.startTTS(txt),
+        onPressed: (){
+          PlayerControlView.showPlayer(context,model: widget.model);
+          PlayerControlView.show();
+        },
       );
     }
     return Container();

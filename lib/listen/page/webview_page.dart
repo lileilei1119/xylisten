@@ -7,6 +7,7 @@ import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/listen/dialog/title_dialog.dart';
 import 'package:xylisten/listen/model/article_model.dart';
+import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
 import 'package:xylisten/platform/widget/xy_widget.dart';
 import 'package:xylisten/platform/xy_index.dart';
@@ -147,7 +148,10 @@ class _WebViewPageState extends State<WebViewPage> {
       return IconButton(
         icon: Icon(Icons.headset),
         tooltip: '语音播报',
-        onPressed: ()=>XyTts.startTTS(_content),
+        onPressed: (){
+          PlayerControlView.showPlayer(context,model: widget.model);
+          PlayerControlView.show();
+        },
       );
     }
     return Container();
