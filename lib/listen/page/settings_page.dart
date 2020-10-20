@@ -4,7 +4,10 @@
  */
 import 'package:flutter/material.dart';
 import 'package:xy_tts/xy_tts.dart';
+import 'package:xylisten/config/db_config.dart';
+import 'package:xylisten/listen/page/player_add_page.dart';
 import 'package:xylisten/platform/res/index.dart';
+import 'package:xylisten/platform/utils/navigator_util.dart';
 import 'package:xylisten/platform/xy_index.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -15,10 +18,23 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
 
   bool _isDarkMode = false;
+  int _trashCount = 0;
+
+
+  _getTrashCount(){
+    dbModelProvider.getArticleListCount(1).then((value){
+      setState(() {
+        _trashCount = value;
+      });
+    });
+  }
+
   @override
   void initState() {
     _isDarkMode = Constant.isDarkMode;
     super.initState();
+
+    _getTrashCount();
   }
 
   @override
@@ -79,7 +95,30 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               )
           ),
-          Divider(), //分割线
+          Divider(),
+          ListTile(
+            dense:true,
+            leading: Icon(Icons.restore_from_trash),
+            title: Text('回收站'),
+            trailing: Container(
+                width: 120,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      '$_trashCount',
+                      style: TextStyles.listContent2,
+                    ),
+                    Icon(
+                      Icons.navigate_next,
+                    ),
+                  ],
+                )),
+            onTap: (){
+              NavigatorUtil.pushPage(context, PlayerAddPage(showType: 2,));
+            },
+          ),
+          Divider(),//分割线
         ],
       ),
     );

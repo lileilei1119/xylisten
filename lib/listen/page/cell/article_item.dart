@@ -4,6 +4,8 @@
  */
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:xylisten/config/db_config.dart';
+import 'package:xylisten/listen/model/playdata_model.dart';
 import 'package:xylisten/listen/page/article_page.dart';
 import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/listen/page/webview_page.dart';
@@ -14,14 +16,83 @@ import 'package:xylisten/platform/xy_index.dart';
 
 class ArticleItem extends StatelessWidget {
   final ArticleModel model;
+  //0: 播放 1：添加到播放器 2：回收站
+  final int showType;
+  final Function refreshCallback;
 
-  const ArticleItem(this.model, {Key key}) : super(key: key);
+  const ArticleItem(this.model, {Key key, this.showType = 0,this.refreshCallback}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     bool isSelStatus = model.tbId == PlayData.curModel?.tbId;
     bool isPlaying = isSelStatus && PlayerControlView.isPlaying;
+
+    _buildBtns() {
+      if (showType == 0) {
+        return IconButton(
+          icon: isPlaying
+              ? Icon(Icons.pause_circle_outline)
+              : Icon(Icons.play_circle_outline),
+          color: Theme.of(context).accentColor,
+          tooltip: '播放',
+          onPressed: () {
+            if (isPlaying) {
+              PlayerControlView.pause();
+            } else {
+              PlayerControlView.showPlayer(context, model: model);
+              PlayerControlView.show();
+            }
+          },
+        );
+      } else if (showType == 1) {
+        return IconButton(
+          icon: Icon(Icons.add),
+          color: Theme.of(context).accentColor,
+          tooltip: '添加',
+          onPressed: () {
+            dbModelProvider
+                .insertPlayData(PlayDataModel()..articleId = model.tbId)
+                .then((value) {
+              BotToast.showText(text: '[${model.title}]\n已添加至播放列表');
+              PlayerControlView.refreshLayerList();
+              if(refreshCallback!=null){
+                refreshCallback();
+              }
+            });
+          },
+        );
+      } else if (showType == 2) {
+        return Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.data_usage),
+              color: Theme.of(context).accentColor,
+              tooltip: '还原',
+              onPressed: () {
+                dbModelProvider
+                    .trashArticle(model.tbId, 0)
+                    .then((value) {
+                  BotToast.showText(text: '[${model.title}]\n已回滚');
+                  if(refreshCallback!=null){
+                    refreshCallback();
+                  }
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.delete_forever),
+              color: Theme.of(context).accentColor,
+              tooltip: '删除',
+              onPressed: () {
+                dbModelProvider.deleteArticle(model.tbId);
+                if(refreshCallback!=null){
+                  refreshCallback();
+                }
+              }),
+          ],
+        );
+      }
+    }
 
     return InkWell(
       onTap: () {
@@ -38,9 +109,7 @@ class ArticleItem extends StatelessWidget {
                 model: model,
               ));
         } else {
-          NavigatorUtil.pushPage(
-              context,
-              WebViewPage(model));
+          NavigatorUtil.pushPage(context, WebViewPage(model));
         }
       },
       child: Container(
@@ -55,7 +124,9 @@ class ArticleItem extends StatelessWidget {
                       "【${model.getCategoryStr()}】" + model.title ?? "",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: isSelStatus?Theme.of(context).textTheme.bodyText1:Theme.of(context).textTheme.bodyText2,
+                      style: isSelStatus
+                          ? Theme.of(context).textTheme.bodyText1
+                          : Theme.of(context).textTheme.bodyText2,
                     ),
                     Gaps.vGap8,
                     Padding(
@@ -72,19 +143,7 @@ class ArticleItem extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(
-                icon: isPlaying?Icon(Icons.pause_circle_outline):Icon(Icons.play_circle_outline),
-                color: Theme.of(context).accentColor,
-                tooltip: '播放',
-                onPressed: () {
-                  if(isPlaying){
-                    PlayerControlView.pause();
-                  }else{
-                    PlayerControlView.showPlayer(context,model: model);
-                    PlayerControlView.show();
-                  }
-                },
-              )
+              _buildBtns(),
             ],
           ),
           decoration: new BoxDecoration(

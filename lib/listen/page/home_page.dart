@@ -18,11 +18,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<ArticleModel> _articleList = [];
 
-  DbModelProvider _dbModelProvider = DbModelProvider();
   ScrollController _scrollController = ScrollController();
 
   void _delItem(ArticleModel model){
-    _dbModelProvider.deleteArticle(model.tbId).then((value){
+    dbModelProvider.trashArticle(model.tbId,1).then((value){
       _articleList.remove(model);
       setState(() {
 
@@ -31,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _refreshList(){
-    _dbModelProvider.getArticleList().then((value) {
+    dbModelProvider.getArticleList(0).then((value) {
       setState(() {
         _articleList = value;
       });
@@ -42,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _dbModelProvider.openDB().then((value) {
+    dbModelProvider.openDB().then((value) {
       _refreshList();
     });
 
@@ -52,7 +51,7 @@ class _HomePageState extends State<HomePage> {
         if(url.isNotEmpty && url.startsWith("http")){
           String title = RegExp(r"(http|https)://(www.)?(\w+(\.)?)+").stringMatch(url);
           ArticleModel model = ArticleModel(title: title,category: EArticleType.url,url: url);
-          _dbModelProvider.insertArticle(model).then((value){
+          dbModelProvider.insertArticle(model).then((value){
             _articleList.insert(0, model);
             setState(() {
 

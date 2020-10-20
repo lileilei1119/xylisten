@@ -3,6 +3,7 @@ import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/listen/page/cell/player_item.dart';
+import 'package:xylisten/listen/page/player_add_page.dart';
 import 'package:xylisten/listen/page/webview_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/res/index.dart';
@@ -18,15 +19,6 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-//  List<ArticleModel> _articleList = [];
-//
-//  void _refreshList(){
-//    dbModelProvider.getPlayDataList().then((value) {
-//      setState(() {
-//        _articleList = value;
-//      });
-//    });
-//  }
 
   _buildHeader() {
     return Container(
@@ -154,10 +146,18 @@ class _PlayerPageState extends State<PlayerPage> {
                 IconButton(
                   icon: Icon(Icons.delete, size: 24),
                   tooltip: '清空播放列表',
+                  onPressed: (){
+                    dbModelProvider.clearPlayDataList().then((value) {
+                      PlayerControlView.refreshLayerList();
+                    });
+                  },
                 ),
                 IconButton(
                   icon: Icon(Icons.add_box, size: 24),
                   tooltip: '添加内容至播放列表',
+                  onPressed: (){
+                    NavigatorUtil.pushPage(context, PlayerAddPage());
+                  },
                 ),
               ],
             )
@@ -176,6 +176,8 @@ class _PlayerPageState extends State<PlayerPage> {
         if(event.route == Constant.eb_play_status){
           setState(() {});
         }else if(event.route == Constant.eb_timer_countdown){
+          setState(() {});
+        }else if(event.route == Constant.eb_refresh_player_list){
           setState(() {});
         }
       }

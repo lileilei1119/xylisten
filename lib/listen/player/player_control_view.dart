@@ -37,9 +37,7 @@ class _LitePlayerViewState extends State<LitePlayerView> {
           });
         }
       }else if(event.route == Constant.eb_play_status){
-        setState(() {
-
-        });
+        setState(() {});
       }
     });
   }
@@ -253,6 +251,7 @@ class PlayerControlView {
   static void refreshLayerList(){
     dbModelProvider.getPlayDataList().then((value) {
       PlayData.playList = value;
+      eventBus.fire(NotifyEvent(route: Constant.eb_refresh_player_list));
     });
   }
 
@@ -287,11 +286,17 @@ class PlayerControlView {
   }
 
   static void deleteById(int tbId){
+    ArticleModel model = getDelModelById(tbId);
+    if(model!=null){
+      PlayData.playList.remove(model);
+    }
+  }
+
+  static ArticleModel getDelModelById(int tbId){
     int idx = 0;
     PlayData.playList.forEach((element) {
       idx ++;
       if(tbId==element.tbId){
-        PlayData.playList.remove(element);
         if(idx<PlayData.playIdx){
           PlayData.playIdx--;
         }else if(idx == PlayData.playIdx){
@@ -299,9 +304,10 @@ class PlayerControlView {
         }else{
           //不需要处理
         }
-        return;
+        return element;
       }
     });
+    return null;
   }
 
   static bool hasNext(){

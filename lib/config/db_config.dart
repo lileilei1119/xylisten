@@ -58,9 +58,9 @@ create table $tableArticle (
     return null;
   }
 
-  Future<List<ArticleModel>> getArticleList() async {
+  Future<List<ArticleModel>> getArticleList(int optVal) async {
     List<Map<String, dynamic>> records =
-        await db.rawQuery('SELECT * FROM $tableArticle order by $tbId desc ');
+        await db.rawQuery('SELECT * FROM $tableArticle where $opt=? order by $tbId desc',[optVal]);
     List<ArticleModel> list = [];
     if (records.length > 0) {
       list = records.map((value) {
@@ -70,8 +70,35 @@ create table $tableArticle (
     return list;
   }
 
+  Future<List<ArticleModel>> getArticle4Add() async {
+    List<Map<String, dynamic>> records =
+    await db.rawQuery('SELECT * FROM $tableArticle where $opt=0 and $tbId not in ( SELECT $pd_articleId FROM $tablePlayData ) order by $tbId desc');
+    List<ArticleModel> list = [];
+    if (records.length > 0) {
+      list = records.map((value) {
+        return ArticleModel.fromJson(value);
+      }).toList();
+    }
+    return list;
+  }
+
+  Future<int> getArticleListCount(int optVal) async {
+    List<Map<String, dynamic>> records =
+    await db.rawQuery('SELECT count(*) as num FROM $tableArticle where $opt=? order by $tbId desc',[optVal]);
+    return records.first['num'];
+  }
+
   Future<int> deleteArticle(int id) async {
     return await db.delete(tableArticle, where: '$tbId = ?', whereArgs: [id]);
+  }
+
+  //丢进垃圾桶
+  Future<int> trashArticle(int id,int val) async {
+    return await db.update(tableArticle, {opt:val},where: '$tbId=$id');
+  }
+
+  Future<int> clearTrashArticle() async {
+    return await db.delete(tableArticle, where: '$opt=1');
   }
 
   Future<int> updateArticle(ArticleModel article) async {
@@ -91,7 +118,7 @@ create table $tableArticle (
 
   Future<List<ArticleModel>> getPlayDataList({int flag = 0}) async {
     List<Map<String, dynamic>> records = await db.rawQuery(
-        'SELECT * FROM $tableArticle where $tbId in (SELECT $pd_articleId FROM $tablePlayData where $pd_flag=? order by $pd_seat desc)',
+        'SELECT * FROM $tableArticle where $opt!=1 and $tbId in (SELECT $pd_articleId FROM $tablePlayData where $pd_flag=? order by $pd_seat desc)',
         [flag]);
     List<ArticleModel> list = [];
     if (records.length > 0) {
@@ -100,6 +127,10 @@ create table $tableArticle (
       }).toList();
     }
     return list;
+  }
+
+  Future<int> clearPlayDataList() async {
+    return await db.delete(tablePlayData, where: '1=1');
   }
 
   Future close() async => db.close();
