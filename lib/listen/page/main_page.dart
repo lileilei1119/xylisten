@@ -22,11 +22,11 @@ class _MainPageState extends State<MainPage> {
       icon: Icon(Icons.add),
       itemBuilder: (BuildContext context) =>
       <PopupMenuEntry<String>>[
-        XyWidget.buildSelectView(context,Icons.description, '新建笔记', 'newTxt'),
+        XyWidget.buildSelectView(context,Icons.description, '新建文本', 'newTxt'),
         PopupMenuDivider(
           height: 1,
         ),
-        XyWidget.buildSelectView(context,Icons.link, '新建链接', 'newLink'),
+        XyWidget.buildSelectView(context,Icons.link, '抓取网页', 'newLink'),
         PopupMenuDivider(
           height: 1,
         ),

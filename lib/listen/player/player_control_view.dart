@@ -261,6 +261,8 @@ class PlayerControlView {
       PlayData.curModel = PlayData.playList[PlayData.playIdx];
       playSplitAudio();
       Future.delayed(Duration(seconds: 1)).then((value) => play());
+    }else{
+      stop();
     }
   }
 

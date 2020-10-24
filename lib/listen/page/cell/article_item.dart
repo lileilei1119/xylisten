@@ -134,7 +134,7 @@ class ArticleItem extends StatelessWidget {
                       child: new Row(
                         children: [
                           Text(
-                            "时长：${model.count}秒",
+                            "字数：${model.count}个",
                             style: TextStyles.listContent,
                           )
                         ],

@@ -48,7 +48,7 @@ class _PlayerPageState extends State<PlayerPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Text(
-                    '时长：${PlayData.curModel.count}秒',
+                    '字数：${PlayData.curModel.count}个',
                     style: TextStyles.listContent,
                   ),
                 ),

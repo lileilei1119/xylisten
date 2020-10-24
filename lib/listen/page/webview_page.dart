@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/listen/dialog/title_dialog.dart';
 import 'package:xylisten/listen/model/article_model.dart';
