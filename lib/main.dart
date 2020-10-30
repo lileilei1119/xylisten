@@ -28,7 +28,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  bool _isDarkMode = false;
   String audioPath;
   AudioPlayer audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
 
@@ -69,8 +68,8 @@ class _MyAppState extends State<MyApp> {
     eventBus.on<NotifyEvent>().listen((event) {
       if (event.route == Constant.eb_dark_mode) {
         setState(() {
-          _isDarkMode = Constant.isDarkMode;
         });
+        CommonUtils.setDarkMode(Global.isDarkMode);
       }else if(event.route == Constant.eb_play_status){
         String status = event.argList.first;
         if(status == Constant.play_status_playing){
@@ -95,10 +94,13 @@ class _MyAppState extends State<MyApp> {
       }
     });
     super.initState();
+
+    updateDarkMode();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       builder: BotToastInit(),
       navigatorObservers: [BotToastNavigatorObserver()],
@@ -106,19 +108,18 @@ class _MyAppState extends State<MyApp> {
 //        canvasColor: XyColors.app_bg,
         primarySwatch: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        brightness: _isDarkMode? Brightness.dark : Brightness.light,
+        brightness: Global.isDarkMode? Brightness.dark : Brightness.light,
       ),
       home: MainPage(),
     );
   }
 
   /// Mark: private method
-  void updateDarkMode() {
-    CommonUtils.getDarkMode().then((value) {
-      setState(() {
-        Constant.isDarkMode = value;
-      });
-    });
+  void updateDarkMode() async{
+    bool value = await CommonUtils.getDarkMode();
+    setState(() {
+       Global.isDarkMode = value;
+     });
   }
 
 }

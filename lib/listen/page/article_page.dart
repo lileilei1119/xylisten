@@ -87,7 +87,7 @@ class _ArticlePageState extends State<ArticlePage> {
           focusNode: _focusNode,
           mode: _editing ? ZefyrMode.edit : ZefyrMode.select,
           imageDelegate: CustomImageDelegate(),
-          keyboardAppearance: Constant.isDarkMode ? Brightness.dark : Brightness.light,
+          keyboardAppearance: Global.isDarkMode ? Brightness.dark : Brightness.light,
         ),
       ),
     );

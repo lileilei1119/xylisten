@@ -7,9 +7,9 @@ import 'package:xylisten/config/xy_config.dart';
      return prefs.getBool(Constant.dark_mode);
    }
 
-   static changeDarkMode() async{
+   static setDarkMode(bool isDark) async{
      SharedPreferences prefs = await SharedPreferences.getInstance();
-     prefs.setBool(Constant.dark_mode, !prefs.getBool(Constant.dark_mode));
+     prefs.setBool(Constant.dark_mode, isDark);
    }
 
    static sec2Str(int sec){

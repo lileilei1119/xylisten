@@ -17,9 +17,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
 
-  bool _isDarkMode = false;
   int _trashCount = 0;
-
 
   _getTrashCount(){
     dbModelProvider.getArticleListCount(1).then((value){
@@ -31,9 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void initState() {
-    _isDarkMode = Constant.isDarkMode;
     super.initState();
-
     _getTrashCount();
   }
 
@@ -48,8 +44,10 @@ class _SettingsPageState extends State<SettingsPage> {
               color: Theme.of(context).accentColor,
             ),
             margin: EdgeInsets.only(bottom: 8.0),
-            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-            child: Container(
+            padding: const EdgeInsets.all(0),
+            child: Image.asset(
+              Global.isDarkMode?'assets/images/header_dark.jpg':'assets/images/header.jpg',
+              fit: BoxFit.fitWidth,
             ),
           ),
           ListTile(
@@ -84,13 +82,12 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: Icon(Icons.brightness_6),
             title: Text('暗黑模式'),
               trailing:Switch(
-                value: _isDarkMode,
+                value: Global.isDarkMode,
                 activeColor: Theme.of(context).primaryColor,     // 激活时原点颜色
                 onChanged: (bool val) {
                   this.setState(() {
-                    _isDarkMode = val;
+                    Global.isDarkMode = val;
                   });
-                  Constant.isDarkMode = _isDarkMode;
                   eventBus.fire(NotifyEvent(route: Constant.eb_dark_mode));
                 },
               )

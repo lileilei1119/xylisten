@@ -19,12 +19,14 @@ class Constant {
 
    static const String sp_play_list = "sp_play_list";
 
-   static bool isDarkMode = false;
-
    /// database
    static const String xy_db_name = "xyListenDB.db";
    static const int xy_db_version = 1;
 
+}
+
+class Global{
+   static bool isDarkMode = false;
 }
 
 class PlayData{
