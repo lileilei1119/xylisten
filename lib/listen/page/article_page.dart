@@ -2,17 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:quill_delta/quill_delta.dart';
-import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/dialog/title_dialog.dart';
 import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
+import 'package:xylisten/listen/zefyr/custom_image_delegate.dart';
 import 'package:xylisten/platform/widget/xy_widget.dart';
 import 'package:xylisten/platform/xy_index.dart';
 import 'package:zefyr/zefyr.dart';
-
-import '../home/images.dart';
 
 class ArticlePage extends StatefulWidget {
   final ArticleModel model;
@@ -31,8 +29,6 @@ class _ArticlePageState extends State<ArticlePage> {
 //  StreamSubscription<NotusChange> _sub;
 
   ArticleModel _model;
-
-  DbModelProvider _dbModelProvider = DbModelProvider();
 
   @override
   void initState() {
@@ -71,23 +67,31 @@ class _ArticlePageState extends State<ArticlePage> {
     final done = _editing
         ? IconButton(onPressed: _stopEditing, icon: Icon(Icons.save))
         : IconButton(onPressed: _startEditing, icon: Icon(Icons.edit));
-    return Scaffold(
-      resizeToAvoidBottomPadding: true,
-      appBar: AppBar(
-        title: Text(widget.model?.title??'新建文章'),
-        actions: [
-          _buildTTSBtn(),
-          done,
-          _buildPopMenu(context),
-        ],
-      ),
-      body: ZefyrScaffold(
-        child: ZefyrEditor(
-          controller: _controller,
-          focusNode: _focusNode,
-          mode: _editing ? ZefyrMode.edit : ZefyrMode.select,
-          imageDelegate: CustomImageDelegate(),
-          keyboardAppearance: Global.isDarkMode ? Brightness.dark : Brightness.light,
+    return WillPopScope(
+      onWillPop: () async{
+        if(_editing){
+          _stopEditing();
+        }
+        return true;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomPadding: true,
+        appBar: AppBar(
+          title: Text(widget.model?.title??'新建文章'),
+          actions: [
+            _buildTTSBtn(),
+            done,
+            _buildPopMenu(context),
+          ],
+        ),
+        body: ZefyrScaffold(
+          child: ZefyrEditor(
+            controller: _controller,
+            focusNode: _focusNode,
+            mode: _editing ? ZefyrMode.edit : ZefyrMode.select,
+            imageDelegate: CustomImageDelegate(),
+            keyboardAppearance: Global.isDarkMode ? Brightness.dark : Brightness.light,
+          ),
         ),
       ),
     );
@@ -112,7 +116,7 @@ class _ArticlePageState extends State<ArticlePage> {
     print('count==${_model.count}');
     if(_model.tbId==null){
       if(_model.content.isNotEmpty){
-        _dbModelProvider.insertArticle(_model).then((value){
+        dbModelProvider.insertArticle(_model).then((value){
           BotToast.showText(text: '添加成功');
           _refreshHomeList();
         });
@@ -120,7 +124,7 @@ class _ArticlePageState extends State<ArticlePage> {
         BotToast.showText(text: '您未填写任何内容');
       }
     }else{
-      _dbModelProvider.updateArticle(_model).then((value){
+      dbModelProvider.updateArticle(_model).then((value){
         BotToast.showText(text: '更新成功');
         _refreshHomeList();
       });
@@ -170,6 +174,11 @@ class _ArticlePageState extends State<ArticlePage> {
             });
             break;
           case 'delete':
+            dbModelProvider.deleteArticle(_model.tbId).then((value){
+              BotToast.showText(text: '删除成功');
+              _refreshHomeList();
+              Navigator.pop(context);
+            });
             break;
         }
       },
@@ -186,7 +195,7 @@ class _ArticlePageState extends State<ArticlePage> {
     _model.flag = 1;
     if(_model.tbId==null){
       if(_model.title.isNotEmpty){
-        _dbModelProvider.insertArticle(_model).then((value){
+        dbModelProvider.insertArticle(_model).then((value){
           BotToast.showText(text: '添加成功');
           _refreshHomeList();
           setState(() {
@@ -197,7 +206,7 @@ class _ArticlePageState extends State<ArticlePage> {
         BotToast.showText(text: '您未填写标题');
       }
     }else{
-      _dbModelProvider.updateArticle(_model).then((value){
+      dbModelProvider.updateArticle(_model).then((value){
         BotToast.showText(text: '更新成功');
         _refreshHomeList();
         setState(() {
