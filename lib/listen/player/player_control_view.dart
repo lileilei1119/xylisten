@@ -85,7 +85,7 @@ class _LitePlayerViewState extends State<LitePlayerView> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: Text(
-                                    '时长：${PlayData.curModel.count}秒',
+                                    '字数：${PlayData.curModel.count}个',
                                     style: TextStyles.listContent,
                                   ),
                                 ),
@@ -236,7 +236,6 @@ class PlayerControlView {
     }
 
     if(model!=null){
-      //添加到播放列表
       PlayData.curModel = model;
       dbModelProvider.insertPlayData(PlayDataModel()..articleId=model.tbId).then((value){
         play();

@@ -108,6 +108,7 @@ create table $tableArticle (
 
   /// playData部分
   Future<PlayDataModel> insertPlayData(PlayDataModel playData) async {
+    await deletePlayDataByArticleId(playData.articleId);
     playData.tbId = await db.insert(tablePlayData, playData.toJson());
     return playData;
   }
@@ -117,8 +118,11 @@ create table $tableArticle (
   }
 
   Future<List<ArticleModel>> getPlayDataList({int flag = 0}) async {
+//    List<Map<String, dynamic>> records = await db.rawQuery(
+//        'SELECT * FROM $tableArticle where $opt!=1 and $tbId in (SELECT $pd_articleId FROM $tablePlayData where $pd_flag=? order by $pd_seat desc,$pd_tbId desc)',
+//        [flag]);
     List<Map<String, dynamic>> records = await db.rawQuery(
-        'SELECT * FROM $tableArticle where $opt!=1 and $tbId in (SELECT $pd_articleId FROM $tablePlayData where $pd_flag=? order by $pd_seat desc)',
+        'SELECT a.* FROM tb_playdata b left join tb_acticle a on b.articleId=a.tbId and b.flag=? order by b.seat desc,b.tbId desc;)',
         [flag]);
     List<ArticleModel> list = [];
     if (records.length > 0) {
