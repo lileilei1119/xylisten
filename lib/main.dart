@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/xy_config.dart';
+import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/utils/common_utils.dart';
 import 'listen/page/main_page.dart';
@@ -73,7 +74,9 @@ class _MyAppState extends State<MyApp> {
       }else if(event.route == Constant.eb_play_status){
         String status = event.argList.first;
         if(status == Constant.play_status_playing){
-          XyTts.startTTS(PlayData.curModel.title,PlayData.curModel.getPlanText());
+          //如果手动设置了标题，则读标题
+          String title = PlayData.curModel.flag==1?PlayData.curModel.title:"";
+          XyTts.startTTS(PlayData.curModel.title,title+PlayData.curModel.getPlanText());
         }else if(status == Constant.play_status_pause){
           if(Platform.isIOS){
             XyTts.pauseTTS();
@@ -84,7 +87,9 @@ class _MyAppState extends State<MyApp> {
           if(Platform.isIOS){
             XyTts.continueTTS();
           }else{
-            XyTts.startTTS(PlayData.curModel.title,PlayData.curModel.getPlanText());
+            //如果手动设置了标题，则读标题
+            String title = PlayData.curModel.flag==1?PlayData.curModel.title:"";
+            XyTts.startTTS(PlayData.curModel.title,title+PlayData.curModel.getPlanText());
           }
         }else if(status == Constant.play_status_stop){
           XyTts.stopTTS();
