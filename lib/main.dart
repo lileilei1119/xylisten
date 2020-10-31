@@ -9,10 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xy_tts/xy_tts.dart';
 import 'package:xylisten/config/xy_config.dart';
-import 'package:xylisten/listen/model/article_model.dart';
+import 'package:xylisten/listen/page/home_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/utils/common_utils.dart';
-import 'listen/page/main_page.dart';
 import 'platform/xy_index.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -115,7 +114,7 @@ class _MyAppState extends State<MyApp> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         brightness: Global.isDarkMode? Brightness.dark : Brightness.light,
       ),
-      home: MainPage(),
+      home: HomePage(),
     );
   }
 
