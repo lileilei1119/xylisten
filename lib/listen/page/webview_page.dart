@@ -4,19 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:xylisten/config/db_config.dart';
-import 'package:xylisten/listen/dialog/title_dialog.dart';
 import 'package:xylisten/listen/model/article_model.dart';
-import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
-import 'package:xylisten/platform/widget/xy_widget.dart';
-import 'package:xylisten/platform/xy_index.dart';
 
 import 'article_page.dart';
 
 class WebViewPage extends StatefulWidget {
   final ArticleModel model;
+  //0 拉取类型 1 显示类型
+  final int type;
 
-  WebViewPage(this.model);
+  WebViewPage(this.model,{this.type=0});
 
   @override
   _WebViewPageState createState() => _WebViewPageState();
@@ -68,24 +66,14 @@ class _WebViewPageState extends State<WebViewPage> {
   }
   // 解析WebView中的数据
   void parseResult() {
-    flutterWebViewPlugin.evalJavascript("document.title").then((result) {
-      // result json字符串，包含token信息
-      if(widget.model.title.startsWith("http") && result.isNotEmpty){
-        widget.model.title = result;
-        _dbModelProvider.updateArticle(widget.model).then((value){
-          _refreshHomeList();
-        });
-        setState(() {
-
-        });
-      }
-    });
-
     flutterWebViewPlugin.evalJavascript("document.body.innerText").then((result) {
       _content = result;
       setState(() {
 
       });
+      if(widget.type==0){
+        skipArticlePage();
+      }
     });
 //    rootBundle.loadString('assets/js/fetch_data.js').then((fetchJs) {
 //      flutterWebViewPlugin.evalJavascript('HtmlDecoder()').then((result) {
@@ -100,6 +88,8 @@ class _WebViewPageState extends State<WebViewPage> {
     List<Widget> titleContent = [];
     titleContent.add(Expanded(
       child: new Text(
+        widget.type==0?
+        "正在拉取网页内容，请稍后……":
         widget.model.title,
         style: new TextStyle(color: Colors.white),
         overflow: TextOverflow.ellipsis,
@@ -119,12 +109,7 @@ class _WebViewPageState extends State<WebViewPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: titleContent,
         ),
-//        iconTheme: new IconThemeData(color: Colors.white),
-        actions: [
-          _buildTTSBtn(),
-          _buildEditBtn(),
-          _buildPopMenu(context),
-        ],
+
       ),
       withZoom: true,  // 允许网页缩放
       withLocalStorage: true, // 允许LocalStorage
@@ -141,103 +126,21 @@ class _WebViewPageState extends State<WebViewPage> {
     super.dispose();
   }
 
-
-  _buildTTSBtn(){
+  skipArticlePage(){
     if(_content!=null && _content.isNotEmpty){
-      return IconButton(
-        icon: Icon(Icons.headset),
-        tooltip: '语音播报',
-        onPressed: (){
-          PlayerControlView.showPlayer(context,model: widget.model);
-          PlayerControlView.show();
-        },
-      );
+      flutterWebViewPlugin.hide();
+      //深复制一个对象
+      ArticleModel model = ArticleModel.fromJson(widget.model.toJson());
+      model.category = EArticleType.txt;
+      model.content = _content;
+
+      NavigatorUtil.pushReplacement(
+          context,
+          ArticlePage(
+            model: model,
+            isGrabType: true,
+          ));
     }
-    return Container();
-  }
-
-  _buildEditBtn(){
-    if(_content!=null && _content.isNotEmpty){
-      return IconButton(
-        icon: Icon(Icons.insert_drive_file),
-        tooltip: '转换成文本并编辑',
-        onPressed: (){
-          flutterWebViewPlugin.hide();
-
-          //深复制一个对象
-          ArticleModel model = ArticleModel.fromJson(widget.model.toJson());
-          model.category = EArticleType.txt;
-          model.content = _content;
-
-          NavigatorUtil.pushReplacement(
-              context,
-              ArticlePage(
-                model: model,
-                isPlanText: true,
-              ));
-        },
-      );
-    }
-    return Container();
-  }
-
-  _buildPopMenu(BuildContext context){
-    return PopupMenuButton<String>(
-      icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) =>
-      <PopupMenuEntry<String>>[
-        XyWidget.buildSelectView(context,Icons.title, '设置标题', 'setTilte'),
-        PopupMenuDivider(
-          height: 1,
-        ),
-        XyWidget.buildSelectView(context,Icons.delete, '删除', 'delete'),
-        PopupMenuDivider(
-          height: 1,
-        ),
-      ],
-      onSelected: (String action) {
-        switch (action) {
-          case 'setTilte':
-            TitleDialog.showTitleDialog(context, confirmCallBack:(title){
-              _updateTitle(title);
-            });
-            break;
-          case 'delete':
-            break;
-        }
-      },
-    );
-  }
-
-  _updateTitle(String txt){
-    widget.model.title = txt;
-    widget.model.flag = 1;
-    if(widget.model.tbId==null){
-      if(widget.model.title.isNotEmpty){
-        _dbModelProvider.insertArticle(widget.model).then((value){
-          BotToast.showText(text: '添加成功');
-          _refreshHomeList();
-          setState(() {
-
-          });
-        });
-      }else{
-        BotToast.showText(text: '您未填写标题');
-      }
-    }else{
-      _dbModelProvider.updateArticle(widget.model).then((value){
-        BotToast.showText(text: '更新成功');
-        _refreshHomeList();
-        setState(() {
-
-        });
-      });
-    }
-  }
-
-  _refreshHomeList(){
-    NotifyEvent event = NotifyEvent(route: Constant.eb_home_list_refresh);
-    eventBus.fire(event);
   }
 
 }

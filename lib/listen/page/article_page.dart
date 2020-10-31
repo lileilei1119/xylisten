@@ -6,17 +6,19 @@ import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/dialog/title_dialog.dart';
 import 'package:xylisten/listen/model/article_model.dart';
+import 'package:xylisten/listen/page/webview_page.dart';
 import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/listen/zefyr/custom_image_delegate.dart';
+import 'package:xylisten/platform/utils/navigator_util.dart';
 import 'package:xylisten/platform/widget/xy_widget.dart';
 import 'package:xylisten/platform/xy_index.dart';
 import 'package:zefyr/zefyr.dart';
 
 class ArticlePage extends StatefulWidget {
   final ArticleModel model;
-  final bool isPlanText;
+  final bool isGrabType;
 
-  ArticlePage({Key key, this.model,this.isPlanText = false}) : super(key: key);
+  ArticlePage({Key key, this.model,this.isGrabType = false}) : super(key: key);
 
   @override
   _ArticlePageState createState() => _ArticlePageState();
@@ -27,6 +29,7 @@ class _ArticlePageState extends State<ArticlePage> {
   final FocusNode _focusNode = FocusNode();
   bool _editing = false;
 //  StreamSubscription<NotusChange> _sub;
+  GlobalKey<ScaffoldState> _articleKey = new GlobalKey<ScaffoldState>();
 
   ArticleModel _model;
 
@@ -41,8 +44,10 @@ class _ArticlePageState extends State<ArticlePage> {
     }
 
     Delta delta;
-    if(widget.isPlanText){
+    if(widget.isGrabType){
       delta = Delta()..insert(_model.content+"\n");
+
+      Future.delayed(Duration(seconds: 1)).then((value) => _showGrabInfo(context));
     }else{
       delta = Delta.fromJson(json.decode(_model.content) as List);
     }
@@ -62,6 +67,22 @@ class _ArticlePageState extends State<ArticlePage> {
     super.dispose();
   }
 
+  _showGrabInfo(BuildContext context) {
+    _stopEditing();
+    _articleKey.currentState.showSnackBar(SnackBar(
+      duration: Duration(seconds: 60),
+      content: Text('抓取网页内容成功，请开始编辑吧'),
+      action: SnackBarAction(
+        label: '点击进入编辑',
+        onPressed: () {
+          setState(() {
+            _editing = true;
+          });
+        },
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final done = _editing
@@ -76,6 +97,7 @@ class _ArticlePageState extends State<ArticlePage> {
       },
       child: Scaffold(
         resizeToAvoidBottomPadding: true,
+        key: _articleKey,
         appBar: AppBar(
           title: Text(widget.model?.title??'新建文章'),
           actions: [
@@ -153,21 +175,30 @@ class _ArticlePageState extends State<ArticlePage> {
   }
 
   _buildPopMenu(BuildContext context){
+
+    var menuArr = <PopupMenuEntry<String>>[
+      XyWidget.buildSelectView(context,Icons.title, '设置标题', 'setTilte'),
+      PopupMenuDivider(
+        height: 1,
+      ),
+      XyWidget.buildSelectView(context,Icons.delete, '删除', 'delete'),
+      PopupMenuDivider(
+        height: 1,
+      ),
+    ];
+
+    if(_model.url.isNotEmpty){
+      menuArr.insert(0,PopupMenuDivider(height: 1,));
+      menuArr.insert(0,XyWidget.buildSelectView(context,Icons.link, '进入链接', 'enterUrl'),);
+    }
     return PopupMenuButton<String>(
       icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) =>
-      <PopupMenuEntry<String>>[
-        XyWidget.buildSelectView(context,Icons.title, '设置标题', 'setTilte'),
-        PopupMenuDivider(
-          height: 1,
-        ),
-        XyWidget.buildSelectView(context,Icons.delete, '删除', 'delete'),
-        PopupMenuDivider(
-          height: 1,
-        ),
-      ],
+      itemBuilder: (BuildContext context) =>menuArr,
       onSelected: (String action) {
         switch (action) {
+          case 'enterUrl':
+            NavigatorUtil.pushPage(context, WebViewPage(_model,type: 1,));
+            break;
           case 'setTilte':
             TitleDialog.showTitleDialog(context, confirmCallBack:(title){
               _updateTitle(title);
