@@ -25,6 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<ArticleModel> _articleList = [];
+  bool _isListEmpty = false;
 
   ScrollController _scrollController = ScrollController();
 
@@ -39,17 +40,18 @@ class _HomePageState extends State<HomePage> {
     dbModelProvider.getArticleList(0).then((value) {
       setState(() {
         _articleList = value;
+        _isListEmpty = (_articleList?.length == 0);
       });
     });
   }
 
-  _scrapHtml(String url){
+  _scrapHtml(String url) {
     if (url.isNotEmpty && url.startsWith("http")) {
       String title =
-      RegExp(r"(http|https)://(www.)?(\w+(\.)?)+").stringMatch(url);
+          RegExp(r"(http|https)://(www.)?(\w+(\.)?)+").stringMatch(url);
       String content = '该链接尚未拉取，请进入拉取哦';
-      ArticleModel model =
-      ArticleModel(title: title, category: EArticleType.url,content: content, url: url);
+      ArticleModel model = ArticleModel(
+          title: title, category: EArticleType.url, content: content, url: url);
       dbModelProvider.insertArticle(model).then((value) {
         _articleList.insert(0, model);
         setState(() {});
@@ -76,10 +78,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     eventBus.on<NotifyEvent>().listen((event) {
-      if (event.route == Constant.eb_add_link) {
-        String url = event.argList.first;
-
-      } else if (event.route == Constant.eb_home_list_refresh) {
+     if (event.route == Constant.eb_home_list_refresh) {
         _refreshList();
       } else if (event.route == Constant.eb_play_status) {
         setState(() {});
@@ -97,30 +96,35 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(Icons.note_add),
             tooltip: "新建文本",
-            onPressed: ()=>NavigatorUtil.pushPage(context, ArticlePage()),
+            onPressed: () => NavigatorUtil.pushPage(context, ArticlePage()),
           ),
           _buildPopMenu(context),
         ],
       ),
-      body: _buildBody(context),
+      body: _isListEmpty
+          ? Align(alignment: Alignment(0.0, -0.8), child: Text('您尚未创建任何内容，请点击右上角添加吧~'))
+          : _buildBody(context),
       drawer: SettingsPage(),
     );
   }
 
   _showLinkDialog(BuildContext context) async {
-
-    var clipboardData = await Clipboard.getData(Clipboard.kTextPlain);//获取粘贴板中的文本
+    var clipboardData =
+        await Clipboard.getData(Clipboard.kTextPlain); //获取粘贴板中的文本
     await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return LinkDialog(clipboardTxt: clipboardData?.text,onOKPressed: (String txt){
-            if (txt.isNotEmpty) {
-              _scrapHtml(txt);
-            } else {
-              BotToast.showText(text: '请输入url网址');
-            }
-          },);
+          return LinkDialog(
+            clipboardTxt: clipboardData?.text,
+            onOKPressed: (String txt) {
+              if (txt.isNotEmpty) {
+                _scrapHtml(txt);
+              } else {
+                BotToast.showText(text: '请输入url网址');
+              }
+            },
+          );
         });
   }
 
@@ -157,11 +161,13 @@ class _HomePageState extends State<HomePage> {
             print('停止滚动');
             if (_scrollController.position.extentAfter == 0) {
               print('滚动到底部');
-              PlayerControlView.show();
-            }
-            if (_scrollController.position.extentBefore == 0) {
-              print('滚动到头部');
-              PlayerControlView.hide();
+              if(PlayerControlView.isShow){
+                PlayerControlView.hide();
+              }
+            }else{
+              if(!PlayerControlView.isShow){
+                PlayerControlView.show();
+              }
             }
           }
           return true;

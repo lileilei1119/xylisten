@@ -187,7 +187,7 @@ class _ArticlePageState extends State<ArticlePage> {
       ),
     ];
 
-    if(_model.url.isNotEmpty){
+    if(_model.url!=null && _model.url.isNotEmpty){
       menuArr.insert(0,PopupMenuDivider(height: 1,));
       menuArr.insert(0,XyWidget.buildSelectView(context,Icons.link, '进入链接', 'enterUrl'),);
     }

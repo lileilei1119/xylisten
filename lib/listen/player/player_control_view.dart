@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:simple_animations/simple_animations.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/model/article_model.dart';
@@ -10,6 +11,7 @@ import 'package:xylisten/listen/page/player_page.dart';
 import 'package:xylisten/platform/res/styles.dart';
 import 'package:xylisten/platform/utils/navigator_util.dart';
 import 'package:xylisten/platform/xy_index.dart';
+import 'package:supercharged/supercharged.dart';
 
 class LitePlayerView extends StatefulWidget {
 
@@ -18,24 +20,28 @@ class LitePlayerView extends StatefulWidget {
 
 }
 
-class _LitePlayerViewState extends State<LitePlayerView> {
+class _LitePlayerViewState extends State<LitePlayerView> with AnimationMixin{
 
-  double _bottom = 0;
+  Animation<double> _bottom ;
+  AnimationController moveController;
 
   @override
   void initState() {
     super.initState();
 
+    moveController = createController();
+    _bottom = (-100.0).tweenTo(0.0).animate(CurvedAnimation(
+        parent: moveController,
+        curve: Interval(0.2, 0.7, curve: Curves.easeOutBack)));
+
     eventBus.on<NotifyEvent>().listen((event) {
       if (event.route == Constant.eb_player_show) {
         bool isShow = event.argList.first;
         if(isShow){
-          setState(() {
-            _bottom = 0;
-          });
+          moveController.play(duration: 400.milliseconds);
         }else{
-          setState(() {
-            _bottom = -100;
+          moveController.playReverse(duration: 400.milliseconds).whenComplete(() {
+            moveController.reset();
           });
         }
       }else if(event.route == Constant.eb_play_status){
@@ -47,7 +53,7 @@ class _LitePlayerViewState extends State<LitePlayerView> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-        bottom: _bottom,
+        bottom: _bottom.value,
         child: new Material(
           child: new Container(
             width: MediaQuery.of(context).size.width,
@@ -174,6 +180,7 @@ class PlayerControlView {
 
   static bool isPlaying = false;
   static bool isFinish = true;
+  static bool isShow = false;
 
   static Timer _countdownTimer;
   static int leftSec = 0;
@@ -218,6 +225,7 @@ class PlayerControlView {
     isFinish = false;
     isPlaying = true;
     eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_playing]));
+    show();
   }
 
   static void pause(){
@@ -237,10 +245,12 @@ class PlayerControlView {
   }
 
   static void show(){
+    isShow = true;
     eventBus.fire(NotifyEvent(route:Constant.eb_player_show,argList: [true]));
   }
 
   static void hide(){
+    isShow = false;
     eventBus.fire(NotifyEvent(route:Constant.eb_player_show,argList: [false]));
   }
 
