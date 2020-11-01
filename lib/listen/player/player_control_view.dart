@@ -5,8 +5,10 @@ import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/config/xy_config.dart';
 import 'package:xylisten/listen/model/article_model.dart';
 import 'package:xylisten/listen/model/playdata_model.dart';
+import 'package:xylisten/listen/page/player_add_page.dart';
 import 'package:xylisten/listen/page/player_page.dart';
 import 'package:xylisten/platform/res/styles.dart';
+import 'package:xylisten/platform/utils/navigator_util.dart';
 import 'package:xylisten/platform/xy_index.dart';
 
 class LitePlayerView extends StatefulWidget {
@@ -54,65 +56,92 @@ class _LitePlayerViewState extends State<LitePlayerView> {
               elevation: 10,
               child: InkWell(
                 onTap: (){
-                  _openModal4Player(context);
+                  if(PlayData.curModel==null){
+                    _openModal4Player(context);
+                    NavigatorUtil.pushPage(context, PlayerAddPage());
+                  }else{
+                    _openModal4Player(context);
+                  }
                 },
                 child: new Padding(
                   padding: EdgeInsets.only(left: 8,top: 8,right: 8,bottom: 0),
-                  child: Container(
-                    child: Column(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RichText(
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    text: TextSpan(children: <TextSpan>[
-                                      TextSpan(
-                                        text: "【${PlayData.curModel.getCategoryStr()}】",
-                                        style: Theme.of(context).textTheme.subtitle1,
-                                      ),
-                                      TextSpan(
-                                        text: PlayData.curModel.title ?? "",
-                                        style: Theme.of(context).textTheme.subtitle1,
-                                      ),
-                                    ])),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Text(
-                                    '字数：${PlayData.curModel.count}个',
-                                    style: TextStyles.listContent,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              PlayerControlView.isPlaying?Icons.pause_circle_outline:Icons.play_circle_outline,
-                                color: Theme.of(context).accentColor,
-                                size: 30,
-                            ),
-                            onPressed: (){
-                              setState(() {
-                                PlayerControlView.playOrPause();
-                              });
-                            },
-                          ),
+                  child: PlayData.curModel==null?_buildNonePlayView():_buildLitePlayView(),
+                ),
+              ),
+            ),
+          ),
+        ));
+  }
 
-                          IconButton(
-                            icon: Icon(Icons.close,color: Colors.grey),
-                            onPressed: (){
-                              PlayerControlView.shutdown();
-                            },
-                          )
-                        ],
-                      ),
+  _buildNonePlayView(){
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(Icons.add_box),
+          Gaps.hGap8,
+          Expanded(child: Text('点击添加播放列表')),
+          IconButton(
+            icon: Icon(Icons.close,color: Colors.grey),
+            onPressed: (){
+              PlayerControlView.shutdown();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  _buildLitePlayView(){
+    return Container(
+      child: Column(children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "【${PlayData.curModel.getCategoryStr()}】" + PlayData.curModel.title ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      '字数：${PlayData.curModel.count}个',
+                      style: TextStyles.listContent,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                PlayerControlView.isPlaying?Icons.pause_circle_outline:Icons.play_circle_outline,
+                color: Theme.of(context).accentColor,
+                size: 30,
+              ),
+              onPressed: (){
+                setState(() {
+                  PlayerControlView.playOrPause();
+                });
+              },
+            ),
+
+            IconButton(
+              icon: Icon(Icons.close,color: Colors.grey),
+              onPressed: (){
+                PlayerControlView.shutdown();
+              },
+            )
+          ],
+        ),
 //                      LinearProgressIndicator(
 //                        backgroundColor: Theme.of(context).canvasColor,
 //                        minHeight: 1,
@@ -120,13 +149,8 @@ class _LitePlayerViewState extends State<LitePlayerView> {
 //                            Theme.of(context).primaryColor),
 //                        value: 0.2,
 //                      )
-                    ]),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ));
+      ]),
+    );
   }
 
   Future _openModal4Player(BuildContext context) async {

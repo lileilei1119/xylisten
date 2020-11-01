@@ -28,7 +28,9 @@ class _PlayerPageState extends State<PlayerPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Column(
+            child: PlayData.curModel==null?
+            Text('暂未播放内容', style: Theme.of(context).textTheme.subtitle1,):
+            Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -56,6 +58,7 @@ class _PlayerPageState extends State<PlayerPage> {
             ),
           ),
           IconButton(
+            alignment: Alignment(1.0, -4.0),
             icon: Icon(Icons.close),
             onPressed: () {
               Navigator.of(context).pop();
@@ -149,6 +152,8 @@ class _PlayerPageState extends State<PlayerPage> {
                   onPressed: (){
                     dbModelProvider.clearPlayDataList().then((value) {
                       PlayerControlView.refreshLayerList();
+                      PlayData.curModel = null;
+                      PlayerControlView.stop();
                     });
                   },
                 ),

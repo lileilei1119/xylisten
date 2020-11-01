@@ -47,8 +47,9 @@ class _HomePageState extends State<HomePage> {
     if (url.isNotEmpty && url.startsWith("http")) {
       String title =
       RegExp(r"(http|https)://(www.)?(\w+(\.)?)+").stringMatch(url);
+      String content = '该链接尚未拉取，请进入拉取哦';
       ArticleModel model =
-      ArticleModel(title: title, category: EArticleType.url, url: url);
+      ArticleModel(title: title, category: EArticleType.url,content: content, url: url);
       dbModelProvider.insertArticle(model).then((value) {
         _articleList.insert(0, model);
         setState(() {});
@@ -128,13 +129,13 @@ class _HomePageState extends State<HomePage> {
       icon: Icon(Icons.more_vert),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         XyWidget.buildSelectView(context, Icons.link, '抓取网页', 'newLink'),
-        PopupMenuDivider(
-          height: 1,
-        ),
-        XyWidget.buildSelectView(context, Icons.description, '二维码', 'newTxt'),
-        PopupMenuDivider(
-          height: 1,
-        ),
+//        PopupMenuDivider(
+//          height: 1,
+//        ),
+//        XyWidget.buildSelectView(context, Icons.description, '二维码', 'newTxt'),
+//        PopupMenuDivider(
+//          height: 1,
+//        ),
       ],
       onSelected: (String action) {
         // 点击选项的时候

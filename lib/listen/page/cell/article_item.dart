@@ -125,7 +125,7 @@ class ArticleItem extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: isSelStatus
-                          ? Theme.of(context).textTheme.bodyText1
+                          ? TextStyles.curPlayTitle(context)
                           : Theme.of(context).textTheme.bodyText2,
                     ),
                     Gaps.vGap8,
@@ -135,7 +135,7 @@ class ArticleItem extends StatelessWidget {
                         children: [
                           Text(
                             "字数：${model.count}个",
-                            style: TextStyles.listContent,
+                            style: isSelStatus?TextStyles.curPlayContent(context):TextStyles.listContent,
                           )
                         ],
                       ),

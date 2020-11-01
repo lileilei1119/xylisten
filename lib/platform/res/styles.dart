@@ -53,6 +53,18 @@ class TextStyles {
     fontSize: Dimens.font_sp18,
     color: XyColors.text_dark,
   );
+  static TextStyle curPlayTitle(BuildContext context){
+    return TextStyle(
+      fontSize: Dimens.font_sp16,
+      color: Theme.of(context).accentColor,
+    );
+  }
+  static TextStyle curPlayContent(BuildContext context){
+    return TextStyle(
+      fontSize: Dimens.font_sp14,
+      color: Theme.of(context).accentColor,
+    );
+  }
 }
 
 class Decorations {

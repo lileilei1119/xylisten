@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xylisten/config/db_config.dart';
 import 'package:xylisten/listen/model/article_model.dart';
+import 'package:xylisten/listen/player/player_control_view.dart';
 import 'package:xylisten/platform/xy_index.dart';
 
 import 'cell/article_item.dart';
@@ -45,7 +46,15 @@ class _PlayerAddPageState extends State<PlayerAddPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async{
-        eventBus.fire(NotifyEvent(route: Constant.eb_home_list_refresh));
+        if(widget.showType==1){
+          if(PlayData.curModel==null && PlayData.playList.length>0){
+            PlayData.curModel = PlayData.playList.first;
+            PlayData.playIdx = 0;
+            PlayerControlView.refreshLayerList();
+          }
+        }else {
+          eventBus.fire(NotifyEvent(route: Constant.eb_home_list_refresh));
+        }
         return true;
       },
       child: Scaffold(

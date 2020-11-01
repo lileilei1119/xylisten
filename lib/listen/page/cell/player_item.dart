@@ -43,7 +43,7 @@ class PlayerItem extends StatelessWidget {
                       "【${model.getCategoryStr()}】" + model.title ?? "",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: isSelStatus?Theme.of(context).textTheme.bodyText1:Theme.of(context).textTheme.bodyText2,
+                      style: isSelStatus?TextStyles.curPlayTitle(context):Theme.of(context).textTheme.bodyText2,
                     ),
                   ],
                 ),
@@ -75,7 +75,8 @@ class PlayerItem extends StatelessWidget {
 
   _delItem() {
     dbModelProvider.deletePlayDataByArticleId(model.tbId).then((value) {
-      PlayerControlView.deleteById(model.tbId);
+//      PlayerControlView.deleteById(model.tbId);
+      PlayerControlView.refreshLayerList();
     });
   }
 
