@@ -57,8 +57,8 @@ class _LitePlayerViewState extends State<LitePlayerView> {
               child: InkWell(
                 onTap: (){
                   if(PlayData.curModel==null){
-                    _openModal4Player(context);
-                    NavigatorUtil.pushPage(context, PlayerAddPage());
+                   PlayerControlView.hide();
+                    NavigatorUtil.pushPage(context, PlayerAddPage(isFromLitePlayer: true,));
                   }else{
                     _openModal4Player(context);
                   }

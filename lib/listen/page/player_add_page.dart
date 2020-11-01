@@ -8,8 +8,9 @@ import 'cell/article_item.dart';
 
 class PlayerAddPage extends StatefulWidget {
   final showType;
+  final isFromLitePlayer;
 
-  const PlayerAddPage({Key key, this.showType=1}) : super(key: key);
+  const PlayerAddPage({Key key, this.showType=1,this.isFromLitePlayer=false}) : super(key: key);
 
   @override
   _PlayerAddPageState createState() => _PlayerAddPageState();
@@ -52,6 +53,9 @@ class _PlayerAddPageState extends State<PlayerAddPage> {
             PlayData.playIdx = 0;
             PlayerControlView.refreshLayerList();
           }
+          if(widget.isFromLitePlayer){
+            PlayerControlView.show();
+          }
         }else {
           eventBus.fire(NotifyEvent(route: Constant.eb_home_list_refresh));
         }
@@ -73,15 +77,26 @@ class _PlayerAddPageState extends State<PlayerAddPage> {
             ):Container()
           ],
         ),
-        body: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            ArticleModel model = _articleList[index];
-            return ArticleItem(model,showType: widget.showType,refreshCallback: ()=>_refreshList(),);
-          },
-          itemExtent: 80.0,
-          itemCount: _articleList?.length??0,
-        ),
+        body:_buildBody(),
       ),
     );
+  }
+
+  _buildBody(){
+    if( _articleList?.length==0){
+      return Align(
+          alignment: Alignment(0.0, -0.8),
+          child: Text(widget.showType==1?'您尚未有可添加的播放源':'您已清空回收站了')
+      );
+    }else{
+      return ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          ArticleModel model = _articleList[index];
+          return ArticleItem(model,showType: widget.showType,refreshCallback: ()=>_refreshList(),);
+        },
+        itemExtent: 80.0,
+        itemCount: _articleList?.length??0,
+      );
+    }
   }
 }
