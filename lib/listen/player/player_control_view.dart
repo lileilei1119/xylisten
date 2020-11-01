@@ -173,6 +173,7 @@ class PlayerControlView {
   static OverlayEntry overlayEntry;
 
   static bool isPlaying = false;
+  static bool isFinish = true;
 
   static Timer _countdownTimer;
   static int leftSec = 0;
@@ -203,13 +204,18 @@ class PlayerControlView {
 
   static void playOrPause(){
     if(!isPlaying){
-      resume();
+      if(isFinish){
+        play();
+      }else{
+        resume();
+      }
     }else{
       pause();
     }
   }
 
   static void play(){
+    isFinish = false;
     isPlaying = true;
     eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_playing]));
   }
@@ -226,6 +232,7 @@ class PlayerControlView {
 
   static void stop(){
     isPlaying = false;
+    isFinish = true;
     eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_stop]));
   }
 
@@ -274,6 +281,10 @@ class PlayerControlView {
   static void refreshLayerList(){
     dbModelProvider.getPlayDataList().then((value) {
       PlayData.playList = value;
+      if(PlayData.playList.length<=0){
+        PlayData.playIdx = 0;
+        PlayData.curModel = null;
+      }
       eventBus.fire(NotifyEvent(route: Constant.eb_refresh_player_list));
     });
   }
