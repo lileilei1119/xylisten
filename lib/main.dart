@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> {
 //        canvasColor: XyColors.app_bg,
         primarySwatch: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        brightness: Global.isDarkMode? Brightness.dark : Brightness.light,
+        brightness: Global.isDarkMode??false? Brightness.dark : Brightness.light,
       ),
       home: HomePage(),
     );

@@ -28,26 +28,36 @@ class _LitePlayerViewState extends State<LitePlayerView> with AnimationMixin{
   @override
   void initState() {
     super.initState();
+    if(mounted){
+      moveController = createController();
+      _bottom = (-100.0).tweenTo(0.0).animate(CurvedAnimation(
+          parent: moveController,
+          curve: Interval(0.2, 0.7, curve: Curves.easeOutBack)));
 
-    moveController = createController();
-    _bottom = (-100.0).tweenTo(0.0).animate(CurvedAnimation(
-        parent: moveController,
-        curve: Interval(0.2, 0.7, curve: Curves.easeOutBack)));
-
-    eventBus.on<NotifyEvent>().listen((event) {
-      if (event.route == Constant.eb_player_show) {
-        bool isShow = event.argList.first;
-        if(isShow){
-          moveController.play(duration: 400.milliseconds);
-        }else{
-          moveController.playReverse(duration: 400.milliseconds).whenComplete(() {
-            moveController.reset();
-          });
+      eventBus.on<NotifyEvent>().listen((event) {
+        if(mounted) {
+          if (event.route == Constant.eb_player_show) {
+            bool isShow = event.argList.first;
+            if (isShow) {
+              moveController.play(duration: 400.milliseconds);
+            } else {
+              moveController.playReverse(duration: 400.milliseconds)
+                  .whenComplete(() {
+                moveController.reset();
+              });
+            }
+          } else if (event.route == Constant.eb_play_status) {
+            setState(() {});
+          }
         }
-      }else if(event.route == Constant.eb_play_status){
-        setState(() {});
-      }
-    });
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+//    moveController.dispose();
+    super.dispose();
   }
 
   @override
@@ -225,7 +235,6 @@ class PlayerControlView {
     isFinish = false;
     isPlaying = true;
     eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_playing]));
-    show();
   }
 
   static void pause(){

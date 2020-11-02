@@ -99,7 +99,7 @@ class _ArticlePageState extends State<ArticlePage> {
         resizeToAvoidBottomPadding: true,
         key: _articleKey,
         appBar: AppBar(
-          title: Text(widget.model?.title??'新建文章'),
+          title: Text(_model?.title??'新建文本'),
           actions: [
             _buildTTSBtn(),
             done,

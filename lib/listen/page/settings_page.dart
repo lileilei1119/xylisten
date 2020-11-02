@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
             margin: EdgeInsets.only(bottom: 8.0),
             padding: const EdgeInsets.all(0),
             child: Image.asset(
-              Global.isDarkMode?'assets/images/header_dark.jpg':'assets/images/header.jpg',
+              Global.isDarkMode??false?'assets/images/header_dark.jpg':'assets/images/header.jpg',
               fit: BoxFit.fitWidth,
             ),
           ),
@@ -82,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: Icon(Icons.brightness_6),
             title: Text('暗黑模式'),
               trailing:Switch(
-                value: Global.isDarkMode,
+                value: Global.isDarkMode??false,
                 activeColor: Theme.of(context).primaryColor,     // 激活时原点颜色
                 onChanged: (bool val) {
                   this.setState(() {

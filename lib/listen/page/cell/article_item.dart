@@ -37,7 +37,7 @@ class ArticleItem extends StatelessWidget {
           tooltip: '播放',
           onPressed: () {
             if (isPlaying) {
-              PlayerControlView.pause();
+              PlayerControlView.stop();
             } else {
               PlayerControlView.showPlayer(context, model: model);
               PlayerControlView.show();
