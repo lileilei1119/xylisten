@@ -283,9 +283,11 @@ class PlayerControlView {
 //    }
     hide();
     stop();
-    Future.delayed(Duration(milliseconds: 800)).then((value){
+    Future.delayed(Duration(milliseconds: 500)).then((value){
       PlayData.playIdx = 0;
       PlayData.curModel = null;
+      //仅仅刷新
+      eventBus.fire(NotifyEvent(route:Constant.eb_play_status));
     });
   }
 
