@@ -2,6 +2,8 @@
  * @Author: xikan
  * @Email: lileilei1119@foxmail.com
  */
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -69,6 +71,10 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  _initPlayView() async{
+    Future.delayed(Duration(seconds: 1)).then((value) => PlayerControlView.init(context));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -84,6 +90,8 @@ class _HomePageState extends State<HomePage> {
         setState(() {});
       }
     });
+
+    _initPlayView();
   }
 
   @override

@@ -166,7 +166,7 @@ class _ArticlePageState extends State<ArticlePage> {
         icon: Icon(Icons.headset),
         tooltip: '语音播报',
         onPressed: (){
-          PlayerControlView.showPlayer(context,model: widget.model);
+          PlayerControlView.showPlayer(model: widget.model);
           PlayerControlView.show();
         },
       );

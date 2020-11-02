@@ -32,7 +32,7 @@ class _LitePlayerViewState extends State<LitePlayerView> with AnimationMixin{
       moveController = createController();
       _bottom = (-100.0).tweenTo(0.0).animate(CurvedAnimation(
           parent: moveController,
-          curve: Interval(0.2, 0.7, curve: Curves.easeOutBack)));
+          curve: Interval(0.2, 0.7, curve: Curves.easeInOutSine)));
 
       eventBus.on<NotifyEvent>().listen((event) {
         if(mounted) {
@@ -54,11 +54,11 @@ class _LitePlayerViewState extends State<LitePlayerView> with AnimationMixin{
     }
   }
 
-  @override
-  void dispose() {
+//  @override
+//  void dispose() {
+//    super.dispose();
 //    moveController.dispose();
-    super.dispose();
-  }
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -195,6 +195,15 @@ class PlayerControlView {
   static Timer _countdownTimer;
   static int leftSec = 0;
 
+  static init(BuildContext context){
+    if (overlayEntry == null) {
+      overlayEntry = new OverlayEntry(builder: (context) {
+        return LitePlayerView();
+      });
+      Overlay.of(context).insert(overlayEntry);
+    }
+  }
+
   static void startTimer(int sec){
     stopTimer();
     leftSec = sec;
@@ -268,23 +277,19 @@ class PlayerControlView {
   }
 
   static void shutdown() {
-    if (overlayEntry != null) {
-      overlayEntry.remove();
-      overlayEntry = null;
-    }
-    PlayData.playIdx = 0;
-    PlayData.curModel = null;
+//    if (overlayEntry != null) {
+//      overlayEntry.remove();
+//      overlayEntry = null;
+//    }
+    hide();
     stop();
+    Future.delayed(Duration(milliseconds: 800)).then((value){
+      PlayData.playIdx = 0;
+      PlayData.curModel = null;
+    });
   }
 
-  static void showPlayer(BuildContext context,{ArticleModel model}){
-    if (overlayEntry == null) {
-      overlayEntry = new OverlayEntry(builder: (context) {
-        return LitePlayerView();
-      });
-      Overlay.of(context).insert(overlayEntry);
-    }
-
+  static void showPlayer({ArticleModel model}){
     if(model!=null){
       PlayData.curModel = model;
       dbModelProvider.insertPlayData(PlayDataModel()..articleId=model.tbId).then((value){

@@ -39,7 +39,7 @@ class ArticleItem extends StatelessWidget {
             if (isPlaying) {
               PlayerControlView.stop();
             } else {
-              PlayerControlView.showPlayer(context, model: model);
+              PlayerControlView.showPlayer(model: model);
               PlayerControlView.show();
             }
           },
