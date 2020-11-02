@@ -112,7 +112,7 @@ class _ArticlePageState extends State<ArticlePage> {
             focusNode: _focusNode,
             mode: _editing ? ZefyrMode.edit : ZefyrMode.select,
             imageDelegate: CustomImageDelegate(),
-            keyboardAppearance: Global.isDarkMode ? Brightness.dark : Brightness.light,
+            keyboardAppearance: Global.isDarkMode??false? Brightness.dark : Brightness.light,
           ),
         ),
       ),
@@ -135,9 +135,9 @@ class _ArticlePageState extends State<ArticlePage> {
       }
     }
     _model.count = txt.replaceAll(RegExp(r"\s"), "").length;
-    print('count==${_model.count}');
+//    print('count==${_model.count}');
     if(_model.tbId==null){
-      if(_model.content.isNotEmpty){
+      if(_model.count>0){
         dbModelProvider.insertArticle(_model).then((value){
           BotToast.showText(text: '添加成功');
           _refreshHomeList();
