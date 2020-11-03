@@ -96,6 +96,7 @@ class ArticleItem extends StatelessWidget {
 
     return InkWell(
       onTap: () {
+      if (showType == 0) {
         if (SlidableData.of(context).renderingMode ==
             SlidableRenderingMode.slide) {
           Slidable.of(context).close();
@@ -111,6 +112,7 @@ class ArticleItem extends StatelessWidget {
         } else {
           NavigatorUtil.pushPage(context, WebViewPage(model));
         }
+      }
       },
       child: Container(
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),

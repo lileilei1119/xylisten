@@ -14,6 +14,7 @@ class Constant {
    static const String play_status_pause = "play_status_pause";
    static const String play_status_continue = "play_status_continue";
    static const String play_status_stop = "play_status_stop";
+   static const String play_status_none = "play_status_none";
 
    static const String sp_play_list = "sp_play_list";
 

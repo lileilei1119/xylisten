@@ -34,7 +34,9 @@ class _HomePageState extends State<HomePage> {
   void _delItem(ArticleModel model) {
     dbModelProvider.trashArticle(model.tbId, 1).then((value) {
       _articleList.remove(model);
-      setState(() {});
+      setState(() {
+        _isListEmpty = (_articleList?.length == 0);
+      });
     });
   }
 

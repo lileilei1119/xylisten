@@ -32,9 +32,9 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>请求相机以获取照片</string>
+	<string>APP需要您的同意，才能访问相机进行拍摄并导入图片编辑图文笔记</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>请求图库以获取照片</string>
+	<string>APP需要您的同意，才能访问相册并导入图片编辑图文笔记</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

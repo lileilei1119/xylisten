@@ -287,7 +287,7 @@ class PlayerControlView {
       PlayData.playIdx = 0;
       PlayData.curModel = null;
       //仅仅刷新
-      eventBus.fire(NotifyEvent(route:Constant.eb_play_status));
+      eventBus.fire(NotifyEvent(route:Constant.eb_play_status,argList: [Constant.play_status_none]));
     });
   }
 
