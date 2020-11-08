@@ -42,8 +42,8 @@ class _MyAppState extends State<MyApp> {
         PlayerControlView.next();
       }else if(route =='onRemotePause'){
         PlayerControlView.pause();
-      }else if(route == 'onRemotePlay'){
-        PlayerControlView.resume();
+      } else if (route == 'onRemotePlay') {
+        PlayerControlView.resumeOrPlay();
       }
     }
   }

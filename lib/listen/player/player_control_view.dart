@@ -230,13 +230,17 @@ class PlayerControlView {
 
   static void playOrPause(){
     if(!isPlaying){
-      if(isFinish){
-        play();
-      }else{
-        resume();
-      }
+      resumeOrPlay();
     }else{
       pause();
+    }
+  }
+
+  static void resumeOrPlay(){
+    if(isFinish){
+      play();
+    }else{
+      resume();
     }
   }
 
