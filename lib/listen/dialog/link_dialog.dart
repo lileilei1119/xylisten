@@ -89,9 +89,9 @@ class _LinkDialogContentState extends State<LinkDialogContent> {
                       labelText: '智能捕获网址：',
                     ),
                      controller: _linkController,
-                     onChanged: (txt){
-                       _linkController.text = txt;
-                     },
+//                     onChanged: (txt){
+//                       _linkController.text = txt;
+//                     },
                   ),
                   Offstage(
                       offstage: _linkController.text.isEmpty?true:false,
@@ -147,9 +147,9 @@ class _LinkDialogContentState extends State<LinkDialogContent> {
                       hintText: '输入您要抓取的网址',
                     ),
                     controller: _linkController,
-                    onChanged: (txt){
-                      _linkController.text = txt;
-                    },
+//                    onChanged: (txt){
+//                      _linkController.text = txt;
+//                    },
                   ),
                   Offstage(
                     offstage: _linkController.text.isEmpty?true:false,

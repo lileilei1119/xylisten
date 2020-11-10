@@ -62,14 +62,7 @@ class _HomePageState extends State<HomePage> {
         NavigatorUtil.pushPage(context, WebViewPage(model));
       });
     } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 1),
-        content: Text('请输入正确的网址（以http或https开头的字符串）'),
-        action: SnackBarAction(
-          label: '知道了',
-          onPressed: () {},
-        ),
-      ));
+      BotToast.showText(text: '请输入正确的网址（以http或https开头的字符串）');
     }
   }
 
