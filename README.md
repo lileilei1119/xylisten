@@ -7,8 +7,8 @@
 - 智能抓取网页功能
 - 播放器控件（含迷你版 和 全屏版）
 
-### 下载地址
-1. iOS ![输入图片说明](https://images.gitee.com/uploads/images/2021/0115/225315_9410b159_425147.png "xy_linsten_ios.png")
+### iOS下载地址
+![输入图片说明](https://images.gitee.com/uploads/images/2021/0115/225315_9410b159_425147.png "xy_linsten_ios.png")
 
 ### 效果图
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/0115/225609_70d3384d_425147.png "首页.png")
