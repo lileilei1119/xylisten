@@ -1,3 +1,5 @@
+***大陆的盆友，可以在gitee上查看 https://gitee.com/xikan/xylisten 图片加载有些慢***
+
 ### 留声
 留声是一款使用TTS语音播报您个人笔记的APP，内置了简洁实用的富文本编辑器。基于flutter，支持android和iOS
 
